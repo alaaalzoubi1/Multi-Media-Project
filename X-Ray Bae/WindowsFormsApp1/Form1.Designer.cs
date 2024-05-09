@@ -1,4 +1,6 @@
-﻿namespace WindowsFormsApp1
+﻿using System.Windows.Forms;
+
+namespace WindowsFormsApp1
 {
     partial class Form1
     {
@@ -55,6 +57,7 @@
             this.BrushType = new System.Windows.Forms.ToolStripLabel();
             this.toolStripComboBox3 = new System.Windows.Forms.ToolStripComboBox();
             this.ColorizeSelectedArea = new System.Windows.Forms.Button();
+            this.OpenImage = new System.Windows.Forms.Button();
             this.menuStrip1.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.pictureBox2)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.pictureBox1)).BeginInit();
@@ -67,7 +70,7 @@
             this.menuStrip1.Items.AddRange(new System.Windows.Forms.ToolStripItem[] { this.fileToolStripMenuItem, this.imageProccingToolStripMenuItem, this.actionToolStripMenuItem });
             this.menuStrip1.Location = new System.Drawing.Point(0, 0);
             this.menuStrip1.Name = "menuStrip1";
-            this.menuStrip1.Size = new System.Drawing.Size(1710, 28);
+            this.menuStrip1.Size = new System.Drawing.Size(1099, 28);
             this.menuStrip1.TabIndex = 0;
             this.menuStrip1.Text = "menuStrip1";
             // 
@@ -82,21 +85,21 @@
             // openToolStripMenuItem
             // 
             this.openToolStripMenuItem.Name = "openToolStripMenuItem";
-            this.openToolStripMenuItem.Size = new System.Drawing.Size(112, 24);
+            this.openToolStripMenuItem.Size = new System.Drawing.Size(152, 24);
             this.openToolStripMenuItem.Text = "open";
             this.openToolStripMenuItem.Click += new System.EventHandler(this.openToolStripMenuItem_Click);
             // 
             // exitToolStripMenuItem
             // 
             this.exitToolStripMenuItem.Name = "exitToolStripMenuItem";
-            this.exitToolStripMenuItem.Size = new System.Drawing.Size(112, 24);
+            this.exitToolStripMenuItem.Size = new System.Drawing.Size(152, 24);
             this.exitToolStripMenuItem.Text = "exit";
             this.exitToolStripMenuItem.Click += new System.EventHandler(this.exitToolStripMenuItem_Click);
             // 
             // saveToolStripMenuItem
             // 
             this.saveToolStripMenuItem.Name = "saveToolStripMenuItem";
-            this.saveToolStripMenuItem.Size = new System.Drawing.Size(112, 24);
+            this.saveToolStripMenuItem.Size = new System.Drawing.Size(152, 24);
             this.saveToolStripMenuItem.Text = "save";
             this.saveToolStripMenuItem.Click += new System.EventHandler(this.saveToolStripMenuItem_Click);
             // 
@@ -104,8 +107,8 @@
             // 
             this.imageProccingToolStripMenuItem.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] { this.spareToolStripMenuItem, this.hueModifierToolStripMenuItem, this.rotateChannelsToolStripMenuItem, this.invertToolStripMenuItem, this.eraseEditingToolStripMenuItem });
             this.imageProccingToolStripMenuItem.Name = "imageProccingToolStripMenuItem";
-            this.imageProccingToolStripMenuItem.Size = new System.Drawing.Size(120, 24);
-            this.imageProccingToolStripMenuItem.Text = "imageProccing";
+            this.imageProccingToolStripMenuItem.Size = new System.Drawing.Size(133, 24);
+            this.imageProccingToolStripMenuItem.Text = "imageProcessing";
             // 
             // spareToolStripMenuItem
             // 
@@ -169,29 +172,34 @@
             // 
             // button1
             // 
-            this.button1.Location = new System.Drawing.Point(1524, 162);
+            this.button1.BackColor = System.Drawing.SystemColors.GradientInactiveCaption;
+            this.button1.Location = new System.Drawing.Point(337, 28);
             this.button1.Name = "button1";
-            this.button1.Size = new System.Drawing.Size(147, 54);
+            this.button1.Size = new System.Drawing.Size(153, 28);
             this.button1.TabIndex = 2;
             this.button1.Text = "color picker\r\n";
-            this.button1.UseVisualStyleBackColor = true;
+            this.button1.UseVisualStyleBackColor = false;
             this.button1.Click += new System.EventHandler(this.button1_Click_1);
             // 
             // pictureBox2
             // 
+            this.pictureBox2.BackColor = System.Drawing.SystemColors.GradientActiveCaption;
+            this.pictureBox2.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
             this.pictureBox2.Cursor = System.Windows.Forms.Cursors.Cross;
-            this.pictureBox2.Location = new System.Drawing.Point(634, 3);
+            this.pictureBox2.Location = new System.Drawing.Point(552, 3);
             this.pictureBox2.Name = "pictureBox2";
-            this.pictureBox2.Size = new System.Drawing.Size(626, 682);
+            this.pictureBox2.Size = new System.Drawing.Size(544, 567);
             this.pictureBox2.TabIndex = 1;
             this.pictureBox2.TabStop = false;
             // 
             // pictureBox1
             // 
+            this.pictureBox1.BackColor = System.Drawing.SystemColors.GradientActiveCaption;
             this.pictureBox1.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
+            this.pictureBox1.Cursor = System.Windows.Forms.Cursors.Cross;
             this.pictureBox1.Location = new System.Drawing.Point(3, 3);
             this.pictureBox1.Name = "pictureBox1";
-            this.pictureBox1.Size = new System.Drawing.Size(625, 682);
+            this.pictureBox1.Size = new System.Drawing.Size(543, 567);
             this.pictureBox1.TabIndex = 0;
             this.pictureBox1.TabStop = false;
             this.pictureBox1.Paint += new System.Windows.Forms.PaintEventHandler(this.pictureBox1_Paint_1);
@@ -207,20 +215,22 @@
             this.tableLayoutPanel1.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 30F));
             this.tableLayoutPanel1.Controls.Add(this.pictureBox1, 0, 0);
             this.tableLayoutPanel1.Controls.Add(this.pictureBox2, 1, 0);
-            this.tableLayoutPanel1.Location = new System.Drawing.Point(0, 28);
+            this.tableLayoutPanel1.Location = new System.Drawing.Point(0, 62);
             this.tableLayoutPanel1.Name = "tableLayoutPanel1";
             this.tableLayoutPanel1.RowCount = 1;
+            //RAGHAD.anti("LosiIIII");
             this.tableLayoutPanel1.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 100F));
-            this.tableLayoutPanel1.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Absolute, 688F));
-            this.tableLayoutPanel1.Size = new System.Drawing.Size(1263, 688);
+            this.tableLayoutPanel1.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Absolute, 436F));
+            this.tableLayoutPanel1.Size = new System.Drawing.Size(1099, 573);
             this.tableLayoutPanel1.TabIndex = 1;
             this.tableLayoutPanel1.Paint += new System.Windows.Forms.PaintEventHandler(this.tableLayoutPanel1_Paint);
             // 
             // toolStrip1
             // 
+            this.toolStrip1.BackColor = System.Drawing.SystemColors.GradientActiveCaption;
             this.toolStrip1.Dock = System.Windows.Forms.DockStyle.None;
             this.toolStrip1.Items.AddRange(new System.Windows.Forms.ToolStripItem[] { this.BrushSize, this.toolStripComboBox2, this.BrushType, this.toolStripComboBox3 });
-            this.toolStrip1.Location = new System.Drawing.Point(1266, 270);
+            this.toolStrip1.Location = new System.Drawing.Point(493, 28);
             this.toolStrip1.Name = "toolStrip1";
             this.toolStrip1.RenderMode = System.Windows.Forms.ToolStripRenderMode.Professional;
             this.toolStrip1.Size = new System.Drawing.Size(406, 28);
@@ -235,7 +245,7 @@
             // 
             // toolStripComboBox2
             // 
-            this.toolStripComboBox2.BackColor = System.Drawing.SystemColors.Control;
+            this.toolStripComboBox2.BackColor = System.Drawing.SystemColors.GradientInactiveCaption;
             this.toolStripComboBox2.ForeColor = System.Drawing.SystemColors.ControlText;
             this.toolStripComboBox2.Items.AddRange(new object[] { "1", "2", "3", "4", "5", "6", "7", "8", "9", "10", "11" });
             this.toolStripComboBox2.Name = "toolStripComboBox2";
@@ -250,7 +260,7 @@
             // 
             // toolStripComboBox3
             // 
-            this.toolStripComboBox3.BackColor = System.Drawing.SystemColors.Control;
+            this.toolStripComboBox3.BackColor = System.Drawing.SystemColors.GradientInactiveCaption;
             this.toolStripComboBox3.ForeColor = System.Drawing.SystemColors.ControlText;
             this.toolStripComboBox3.Items.AddRange(new object[] { "Round", "Square", "Triangle", "Star" });
             this.toolStripComboBox3.Name = "toolStripComboBox3";
@@ -259,20 +269,33 @@
             // 
             // ColorizeSelectedArea
             // 
-            this.ColorizeSelectedArea.Location = new System.Drawing.Point(1524, 55);
+            this.ColorizeSelectedArea.BackColor = System.Drawing.SystemColors.GradientInactiveCaption;
+            this.ColorizeSelectedArea.Location = new System.Drawing.Point(159, 28);
             this.ColorizeSelectedArea.Name = "ColorizeSelectedArea";
-            this.ColorizeSelectedArea.Size = new System.Drawing.Size(157, 43);
+            this.ColorizeSelectedArea.Size = new System.Drawing.Size(172, 28);
             this.ColorizeSelectedArea.TabIndex = 4;
-            this.ColorizeSelectedArea.Text = "ColorizeSelectedArea";
-            this.ColorizeSelectedArea.UseVisualStyleBackColor = true;
+            this.ColorizeSelectedArea.Text = "Colorize Selected Area";
+            this.ColorizeSelectedArea.UseVisualStyleBackColor = false;
             this.ColorizeSelectedArea.Click += new System.EventHandler(this.ColorizeSelectedArea_Click);
+            // 
+            // OpenImage
+            // 
+            this.OpenImage.BackColor = System.Drawing.SystemColors.GradientInactiveCaption;
+            this.OpenImage.Location = new System.Drawing.Point(0, 28);
+            this.OpenImage.Name = "OpenImage";
+            this.OpenImage.Size = new System.Drawing.Size(153, 28);
+            this.OpenImage.TabIndex = 5;
+            this.OpenImage.Text = "Open Image";
+            this.OpenImage.UseVisualStyleBackColor = false;
+            this.OpenImage.Click += new System.EventHandler(this.OpenImage_Click);
             // 
             // Form1
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(8F, 16F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.BackColor = System.Drawing.SystemColors.ButtonFace;
-            this.ClientSize = new System.Drawing.Size(1710, 778);
+            this.BackColor = System.Drawing.SystemColors.ActiveCaption;
+            this.ClientSize = new System.Drawing.Size(1099, 645);
+            this.Controls.Add(this.OpenImage);
             this.Controls.Add(this.ColorizeSelectedArea);
             this.Controls.Add(this.tableLayoutPanel1);
             this.Controls.Add(this.menuStrip1);
@@ -296,6 +319,8 @@
             this.ResumeLayout(false);
             this.PerformLayout();
         }
+
+        private System.Windows.Forms.Button OpenImage;
 
         private System.Windows.Forms.Button ColorizeSelectedArea;
 

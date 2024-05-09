@@ -1,31 +1,20 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.ComponentModel;
-using System.Data;
 using System.Drawing;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using System.Windows.Forms;
 using System.IO;
-using AForge;
-using AForge.Imaging;
 using AForge.Imaging.Filters;
-using AForge.Imaging.ComplexFilters;
-using Microsoft.SqlServer.Server;
 using System.Drawing.Imaging;
-
-
 namespace WindowsFormsApp1
 {
     public partial class Form1 : Form
     {
-        private bool isPainting = false;
-        private Color paintColor = Color.Black; 
-        private int paintBrushSize = 5;
-        private ColorDialog colorDialog;
-        private bool isSelect = true;
-        private string brush_type = "Triangle";
+        private bool _isPainting = false;
+        private Color _paintColor = Color.Black; 
+        private int _paintBrushSize = 5;
+        private ColorDialog _colorDialog;
+        private bool _isSelect = true;
+        private string _brushType = "Triangle";
        
         public Form1()
         {
@@ -35,7 +24,7 @@ namespace WindowsFormsApp1
 
         private void Form1_Load(object sender, EventArgs e)
         {
-            colorDialog = new ColorDialog();
+            _colorDialog = new ColorDialog();
         }
 
         private void fileToolStripMenuItem_Click(object sender, EventArgs e)
@@ -53,8 +42,6 @@ namespace WindowsFormsApp1
             {
                 System.Drawing.Image originalImage = System.Drawing.Image.FromFile(openFileDialog1.FileName);
                 pictureBox1.Image = ResizeImage(originalImage, pictureBox1.Size);
-
-               
             }
         }
 
@@ -134,33 +121,29 @@ namespace WindowsFormsApp1
 
         private void pictureBox1_MouseDown_1(object sender, MouseEventArgs e)
         {
-            if (isSelect)
+            if (_isSelect)
             {
                 RectStartPoint = e.Location;
                 Invalidate();
             }
             else
             {
-                // Start painting
-                isPainting = true;
+                _isPainting = true;
                 PaintOnPictureBox(e.Location);
             }
         }
 
         private void pictureBox1_MouseMove_1(object sender, MouseEventArgs e)
         {
-            if (isSelect)
+            if (_isSelect)
             {
                 if (e.Button == MouseButtons.Left)
                 {
                     float scaleX = (float)pictureBox1.Image.Width / pictureBox1.Width;
                     float scaleY = (float)pictureBox1.Image.Height / pictureBox1.Height;
-
-                    // تحويل إحداثيات النقرة إلى إحداثيات الصورة الأصلية
                     int originalX = (int)(e.X * scaleX);
                     int originalY = (int)(e.Y * scaleY);
 
-                    // الآن يمكن استخدام originalX و originalY للتلوين في الصورة الأصلية
                     System.Drawing.Point tempEndPoint = e.Location;
                     Rect.Location = new System.Drawing
                         .Point(
@@ -172,21 +155,19 @@ namespace WindowsFormsApp1
 
                     pictureBox1.Invalidate(Rect);
                 }
-            }else if (isPainting)
+            }else if (_isPainting)
             {
-                // Paint as the mouse moves
                 PaintOnPictureBox(e.Location);
             }
         }
 
         private void pictureBox1_Paint_1(object sender, PaintEventArgs e)
         {
-            if (isSelect)
+            if (_isSelect)
             {
                 if (pictureBox1.Image != null && Rect != Rectangle.Empty)
                 {
-                    // Create a pen to draw the rectangle
-                    using (Pen selectPen = new Pen(colorDialog.Color, 4)) // Red color, 2 pixels width
+                    using (Pen selectPen = new Pen(_colorDialog.Color, 4))
                     {
                         e.Graphics.DrawRectangle(selectPen, Rect);
             
@@ -198,7 +179,7 @@ namespace WindowsFormsApp1
 
         private void pictureBox1_DoubleClick(object sender, EventArgs e)
         {
-            if (isSelect)
+            if (_isSelect)
             {
                 Rect = new Rectangle();
                 pictureBox1.Invalidate();
@@ -211,25 +192,25 @@ namespace WindowsFormsApp1
 
         private void button1_Click_1(object sender, EventArgs e)
         {
-            if (colorDialog.ShowDialog()==DialogResult.OK)
+            if (_colorDialog.ShowDialog()==DialogResult.OK)
             {
-                paintColor = colorDialog.Color;
+                _paintColor = _colorDialog.Color;
             }        
         }
 
         private void selectToolStripMenuItem_Click(object sender, EventArgs e)
         {
-            isSelect = true;
+            _isSelect = true;
         }
 
         private void paintToolStripMenuItem_Click(object sender, EventArgs e)
         {
-            isSelect = false;
+            _isSelect = false;
         }
 
         private void pictureBox1_MouseUp(object sender, MouseEventArgs e)
         {
-            isPainting = false;
+            _isPainting = false;
         }
         private void PaintOnPictureBox(System.Drawing.Point location)
 {
@@ -240,46 +221,43 @@ namespace WindowsFormsApp1
 
     using (Graphics g = Graphics.FromImage(pictureBox1.Image))
     {
-        // Use the selected brush type
-        switch (brush_type)
+        switch (_brushType)
         {
             case "Round":
-                using (Brush brush = new SolidBrush(paintColor))
+                using (Brush brush = new SolidBrush(_paintColor))
                 {
-                    g.FillEllipse(brush, location.X - paintBrushSize / 2, location.Y - paintBrushSize / 2, paintBrushSize, paintBrushSize);
+                    g.FillEllipse(brush, location.X - _paintBrushSize / 2, location.Y - _paintBrushSize / 2, _paintBrushSize, _paintBrushSize);
                 }
                 break;
             case "Square":
-                using (Brush brush = new SolidBrush(paintColor))
+                using (Brush brush = new SolidBrush(_paintColor))
                 {
-                    g.FillRectangle(brush, location.X - paintBrushSize / 2, location.Y - paintBrushSize / 2, paintBrushSize, paintBrushSize);
+                    g.FillRectangle(brush, location.X - _paintBrushSize / 2, location.Y - _paintBrushSize / 2, _paintBrushSize, _paintBrushSize);
                 }
                 break;
             case "Triangle":
-                using (Brush brush = new SolidBrush(paintColor))
+                using (Brush brush = new SolidBrush(_paintColor))
                 {
                     System.Drawing.Point[] points = {
-                        new System.Drawing.Point(location.X, location.Y - paintBrushSize / 2),
-                        new System.Drawing.Point(location.X - paintBrushSize / 2, location.Y + paintBrushSize / 2),
-                        new System.Drawing.Point(location.X + paintBrushSize / 2, location.Y + paintBrushSize / 2)
+                        new System.Drawing.Point(location.X, location.Y - _paintBrushSize / 2),
+                        new System.Drawing.Point(location.X - _paintBrushSize / 2, location.Y + _paintBrushSize / 2),
+                        new System.Drawing.Point(location.X + _paintBrushSize / 2, location.Y + _paintBrushSize / 2)
                     };
                     g.FillPolygon(brush, points);
                 }
                 break;
             case "Star":
-                using (Brush brush = new SolidBrush(paintColor))
+                using (Brush brush = new SolidBrush(_paintColor))
                 {
-                    PointF[] starPoints = CreateStarPoints(5, new PointF(location.X, location.Y), paintBrushSize / 2, paintBrushSize / 4);
+                    PointF[] starPoints = CreateStarPoints(5, new PointF(location.X, location.Y), _paintBrushSize / 2, _paintBrushSize / 4);
                     g.FillPolygon(brush, starPoints);
                 }
                 break;
-            // Add more brush types as needed
         }
     }
     pictureBox1.Invalidate();
 }
 
-// Helper method to create star points
 private PointF[] CreateStarPoints(int numPoints, PointF center, float outerRadius, float innerRadius)
 {
     List<PointF> points = new List<PointF>();
@@ -298,20 +276,18 @@ private PointF[] CreateStarPoints(int numPoints, PointF center, float outerRadiu
         
         private void toolStripComboBox2_SelectedIndexChanged(object sender, EventArgs e)
         {
-            paintBrushSize = int.Parse(toolStripComboBox2.SelectedItem.ToString());
+            _paintBrushSize = int.Parse(toolStripComboBox2.SelectedItem.ToString());
 
         }
 
         private void toolStripComboBox3_SelectedIndexChanged(object sender, EventArgs e)
         {
-            brush_type = toolStripComboBox3.SelectedItem.ToString();
+            _brushType = toolStripComboBox3.SelectedItem.ToString();
         }
         private void ColorizeSelectedArea1(Bitmap originalImage, Rectangle selectionArea, Color color)
         {
-            // Ensure the selection area is within the image bounds
             selectionArea.Intersect(new Rectangle(0, 0, originalImage.Width, originalImage.Height));
 
-            // Lock the image bits for read/write access
             BitmapData bitmapData = originalImage.LockBits(
                 new Rectangle(0, 0, originalImage.Width, originalImage.Height),
                 ImageLockMode.ReadWrite, originalImage.PixelFormat);
@@ -321,13 +297,11 @@ private PointF[] CreateStarPoints(int numPoints, PointF center, float outerRadiu
             byte[] pixels = new byte[byteCount];
             IntPtr ptrFirstPixel = bitmapData.Scan0;
 
-            // Copy the RGB values into the array
             System.Runtime.InteropServices.Marshal.Copy(ptrFirstPixel, pixels, 0, pixels.Length);
 
             int heightInPixels = bitmapData.Height;
             int widthInBytes = bitmapData.Width * bytesPerPixel;
 
-            // Colorize the selected area
             for (int y = selectionArea.Top; y < selectionArea.Bottom; y++)
             {
                 int currentLine = y * bitmapData.Stride;
@@ -335,8 +309,7 @@ private PointF[] CreateStarPoints(int numPoints, PointF center, float outerRadiu
                 {
                     int xIndex = currentLine + x * bytesPerPixel;
 
-                    // Apply the color transformation considering the brightness
-                    byte originalBrightness = pixels[xIndex]; // Assuming grayscale image for simplicity
+                    byte originalBrightness = pixels[xIndex]; 
                     ApplyHeatMapColorTransformation(originalBrightness, out byte r, out byte g, out byte b);
 
                     pixels[xIndex] = b;
@@ -345,10 +318,8 @@ private PointF[] CreateStarPoints(int numPoints, PointF center, float outerRadiu
                 }
             }
 
-            // Copy the RGB values back to the bitmap
             System.Runtime.InteropServices.Marshal.Copy(pixels, 0, ptrFirstPixel, pixels.Length);
 
-            // Unlock the bits
             originalImage.UnlockBits(bitmapData);
         }
 
@@ -357,7 +328,7 @@ private PointF[] CreateStarPoints(int numPoints, PointF center, float outerRadiu
 
             Bitmap xrayImage = (Bitmap)pictureBox1.Image;
 
-            ColorizeSelectedArea1(xrayImage, Rect, colorDialog.Color);
+            ColorizeSelectedArea1(xrayImage, Rect, _colorDialog.Color);
 
             pictureBox2.Image = xrayImage;
         }
@@ -391,23 +362,35 @@ private PointF[] CreateStarPoints(int numPoints, PointF center, float outerRadiu
             return newImage;
         }
         private void ApplyHeatMapColorTransformation(byte brightness, out byte r, out byte g, out byte b)
-        {
-            // تعديل هذه القيم لتحقيق التدرج اللوني المطلوب
-            if (brightness < 128)
+        { 
+            if (brightness < 85) 
             {
-                r = (byte)(2 * brightness);
-                g = (byte)(2 * (128 - brightness));
+                r = (byte)(255 - (brightness * 3));
+                g = (byte)(brightness * 3);
                 b = 0;
             }
-            else
+            else if (brightness < 170) {
+                r = 0;
+                g = (byte)(255 - ((brightness - 85) * 3));
+                b = (byte)((brightness - 85) * 3);
+            }
+            else 
             {
-                r = 255;
-                g = (byte)(2 * (brightness - 128));
-                b = 0;
+                r = 0;
+                g = (byte)((brightness - 170) * 3);
+                b = 255;
             }
         }
 
 
-        
+        private void OpenImage_Click(object sender, EventArgs e)
+        {
+            if (openFileDialog1.ShowDialog() == DialogResult.OK)
+            {
+                System.Drawing.Image originalImage = System.Drawing.Image.FromFile(openFileDialog1.FileName);
+                pictureBox1.Image = ResizeImage(originalImage, pictureBox1.Size);
+            }
+            
+        }
     }
 }
