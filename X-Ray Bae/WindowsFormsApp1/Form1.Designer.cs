@@ -42,6 +42,7 @@ namespace WindowsFormsApp1
             this.hueModifierToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.rotateChannelsToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.invertToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.heatMapToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.eraseEditingToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.actionToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.selectToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
@@ -85,27 +86,27 @@ namespace WindowsFormsApp1
             // openToolStripMenuItem
             // 
             this.openToolStripMenuItem.Name = "openToolStripMenuItem";
-            this.openToolStripMenuItem.Size = new System.Drawing.Size(152, 24);
+            this.openToolStripMenuItem.Size = new System.Drawing.Size(112, 24);
             this.openToolStripMenuItem.Text = "open";
             this.openToolStripMenuItem.Click += new System.EventHandler(this.openToolStripMenuItem_Click);
             // 
             // exitToolStripMenuItem
             // 
             this.exitToolStripMenuItem.Name = "exitToolStripMenuItem";
-            this.exitToolStripMenuItem.Size = new System.Drawing.Size(152, 24);
+            this.exitToolStripMenuItem.Size = new System.Drawing.Size(112, 24);
             this.exitToolStripMenuItem.Text = "exit";
             this.exitToolStripMenuItem.Click += new System.EventHandler(this.exitToolStripMenuItem_Click);
             // 
             // saveToolStripMenuItem
             // 
             this.saveToolStripMenuItem.Name = "saveToolStripMenuItem";
-            this.saveToolStripMenuItem.Size = new System.Drawing.Size(152, 24);
+            this.saveToolStripMenuItem.Size = new System.Drawing.Size(112, 24);
             this.saveToolStripMenuItem.Text = "save";
             this.saveToolStripMenuItem.Click += new System.EventHandler(this.saveToolStripMenuItem_Click);
             // 
             // imageProccingToolStripMenuItem
             // 
-            this.imageProccingToolStripMenuItem.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] { this.spareToolStripMenuItem, this.hueModifierToolStripMenuItem, this.rotateChannelsToolStripMenuItem, this.invertToolStripMenuItem, this.eraseEditingToolStripMenuItem });
+            this.imageProccingToolStripMenuItem.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] { this.spareToolStripMenuItem, this.hueModifierToolStripMenuItem, this.rotateChannelsToolStripMenuItem, this.invertToolStripMenuItem, this.heatMapToolStripMenuItem, this.eraseEditingToolStripMenuItem });
             this.imageProccingToolStripMenuItem.Name = "imageProccingToolStripMenuItem";
             this.imageProccingToolStripMenuItem.Size = new System.Drawing.Size(133, 24);
             this.imageProccingToolStripMenuItem.Text = "imageProcessing";
@@ -137,6 +138,13 @@ namespace WindowsFormsApp1
             this.invertToolStripMenuItem.Size = new System.Drawing.Size(181, 24);
             this.invertToolStripMenuItem.Text = "invert";
             this.invertToolStripMenuItem.Click += new System.EventHandler(this.invertToolStripMenuItem_Click);
+            // 
+            // heatMapToolStripMenuItem
+            // 
+            this.heatMapToolStripMenuItem.Name = "heatMapToolStripMenuItem";
+            this.heatMapToolStripMenuItem.Size = new System.Drawing.Size(181, 24);
+            this.heatMapToolStripMenuItem.Text = "HeatMap";
+            this.heatMapToolStripMenuItem.Click += new System.EventHandler(this.heatMapToolStripMenuItem_Click);
             // 
             // eraseEditingToolStripMenuItem
             // 
@@ -202,6 +210,9 @@ namespace WindowsFormsApp1
             this.pictureBox1.Size = new System.Drawing.Size(543, 567);
             this.pictureBox1.TabIndex = 0;
             this.pictureBox1.TabStop = false;
+            this.pictureBox1.DragDrop += new System.Windows.Forms.DragEventHandler(this.pictureBox1_DragDrop);
+            this.pictureBox1.DragEnter += new System.Windows.Forms.DragEventHandler(this.pictureBox1_DragEnter);
+            this.pictureBox1.DragOver += new System.Windows.Forms.DragEventHandler(this.pictureBox1_DragOver);
             this.pictureBox1.Paint += new System.Windows.Forms.PaintEventHandler(this.pictureBox1_Paint_1);
             this.pictureBox1.MouseDown += new System.Windows.Forms.MouseEventHandler(this.pictureBox1_MouseDown_1);
             this.pictureBox1.MouseMove += new System.Windows.Forms.MouseEventHandler(this.pictureBox1_MouseMove_1);
@@ -218,9 +229,8 @@ namespace WindowsFormsApp1
             this.tableLayoutPanel1.Location = new System.Drawing.Point(0, 62);
             this.tableLayoutPanel1.Name = "tableLayoutPanel1";
             this.tableLayoutPanel1.RowCount = 1;
-            //RAGHAD.anti("LosiIIII");
             this.tableLayoutPanel1.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 100F));
-            this.tableLayoutPanel1.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Absolute, 436F));
+            this.tableLayoutPanel1.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Absolute, 573F));
             this.tableLayoutPanel1.Size = new System.Drawing.Size(1099, 573);
             this.tableLayoutPanel1.TabIndex = 1;
             this.tableLayoutPanel1.Paint += new System.Windows.Forms.PaintEventHandler(this.tableLayoutPanel1_Paint);
@@ -319,6 +329,8 @@ namespace WindowsFormsApp1
             this.ResumeLayout(false);
             this.PerformLayout();
         }
+
+        private System.Windows.Forms.ToolStripMenuItem heatMapToolStripMenuItem;
 
         private System.Windows.Forms.Button OpenImage;
 

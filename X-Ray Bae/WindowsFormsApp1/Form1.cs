@@ -1,15 +1,18 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Drawing;
-using System.Windows.Forms;
-using System.IO;
-using AForge.Imaging.Filters;
+using System.Drawing.Drawing2D;
 using System.Drawing.Imaging;
+using System.IO;
+using System.Runtime.InteropServices;
+using System.Windows.Forms;
+using AForge.Imaging.Filters;
+
 namespace WindowsFormsApp1
 {
     public partial class Form1 : Form
     {
-        private bool _isPainting = false;
+        private bool _isPainting;
         private Color _paintColor = Color.Black; 
         private int _paintBrushSize = 5;
         private ColorDialog _colorDialog;
@@ -18,12 +21,13 @@ namespace WindowsFormsApp1
        
         public Form1()
         {
-       
+            
             InitializeComponent();
         }
 
         private void Form1_Load(object sender, EventArgs e)
         {
+            pictureBox1.AllowDrop = true;
             _colorDialog = new ColorDialog();
         }
 
@@ -33,14 +37,14 @@ namespace WindowsFormsApp1
 
         private void exitToolStripMenuItem_Click(object sender, EventArgs e)
         {
-            this.Close();
+            Close();
         }
 
         private void openToolStripMenuItem_Click(object sender, EventArgs e)
         {
             if (openFileDialog1.ShowDialog() == DialogResult.OK)
             {
-                System.Drawing.Image originalImage = System.Drawing.Image.FromFile(openFileDialog1.FileName);
+                Image originalImage = Image.FromFile(openFileDialog1.FileName);
                 pictureBox1.Image = ResizeImage(originalImage, pictureBox1.Size);
             }
         }
@@ -52,8 +56,9 @@ namespace WindowsFormsApp1
         private void spareToolStripMenuItem_Click(object sender, EventArgs e)
         {
             Sepia sepia = new Sepia();
-            pictureBox2.Image = sepia.Apply((Bitmap)pictureBox1.Image);
-        }
+            Bitmap image1 = sepia.Apply((Bitmap)pictureBox1.Image);
+            ColorizeSelectedArea1(image1,_rect,_colorDialog.Color);
+            pictureBox2.Image = image1;        }
 
         private void eraseEditingToolStripMenuItem_Click(object sender, EventArgs e)
         {
@@ -63,29 +68,33 @@ namespace WindowsFormsApp1
         private void hueModifierToolStripMenuItem_Click(object sender, EventArgs e)
         {
             HueModifier hueModifier = new HueModifier(200);
-            pictureBox2.Image = hueModifier.Apply((Bitmap)pictureBox1.Image);
+            Bitmap image1 = hueModifier.Apply((Bitmap)pictureBox1.Image);
+            ColorizeSelectedArea1(image1,_rect,_colorDialog.Color);
+            pictureBox2.Image = image1;
         }
 
         private void rotateChannelsToolStripMenuItem_Click(object sender, EventArgs e)
         {
             RotateChannels rotateChannels = new RotateChannels();
-            pictureBox2.Image = rotateChannels.Apply((Bitmap)pictureBox1.Image);
-
+            Bitmap image1 = rotateChannels.Apply((Bitmap)pictureBox1.Image);
+            ColorizeSelectedArea1(image1,_rect,_colorDialog.Color);
+            pictureBox2.Image = image1;
         }
 
         private void invertToolStripMenuItem_Click(object sender, EventArgs e)
         {
             Invert invert = new Invert();
-            pictureBox2.Image = invert.Apply((Bitmap)pictureBox1.Image);
-
+            Bitmap image1 = invert.Apply((Bitmap)pictureBox1.Image);
+            ColorizeSelectedArea1(image1,_rect,_colorDialog.Color);
+            pictureBox2.Image = image1;
         }
 
         private void saveToolStripMenuItem_Click(object sender, EventArgs e)
         {
             SaveFileDialog saveFileDialog = new SaveFileDialog();
             saveFileDialog.Filter =
-                "Bitmap Image (*.bmp)|*.bmp|JPEG Image (*.jpg;*.jpeg)|*.jpg;*.jpeg|PNG Image (*.png)|*.png|GIF Image (*.gif)|*.gif";
-            saveFileDialog.Title = "Save Image As...";
+                @"Bitmap Image (*.bmp)|*.bmp|JPEG Image (*.jpg;*.jpeg)|*.jpg;*.jpeg|PNG Image (*.png)|*.png|GIF Image (*.gif)|*.gif";
+            saveFileDialog.Title = @"Save Image As...";
 
             if (saveFileDialog.ShowDialog() == DialogResult.OK)
             {
@@ -110,12 +119,11 @@ namespace WindowsFormsApp1
                         throw new NotSupportedException($"Unsupported file extension: {extension}");
                 }
 
-                pictureBox2.Image.Save(saveFileDialog.FileName, format);
+                if (saveFileDialog.FileName != null) pictureBox2.Image.Save(saveFileDialog.FileName, format);
             }
         }
-        private System.Drawing.Point RectStartPoint;
-        private Rectangle Rect = new Rectangle();
-        private Brush selectionBrush = new SolidBrush(Color.FromArgb(150, 132, 207, 66));
+        private Point _rectStartPoint;
+        private Rectangle _rect;
         
 
 
@@ -123,7 +131,7 @@ namespace WindowsFormsApp1
         {
             if (_isSelect)
             {
-                RectStartPoint = e.Location;
+                _rectStartPoint = e.Location;
                 Invalidate();
             }
             else
@@ -139,21 +147,15 @@ namespace WindowsFormsApp1
             {
                 if (e.Button == MouseButtons.Left)
                 {
-                    float scaleX = (float)pictureBox1.Image.Width / pictureBox1.Width;
-                    float scaleY = (float)pictureBox1.Image.Height / pictureBox1.Height;
-                    int originalX = (int)(e.X * scaleX);
-                    int originalY = (int)(e.Y * scaleY);
+                    Point tempEndPoint = e.Location;
+                    _rect.Location = new Point(
+                            Math.Min(_rectStartPoint.X, tempEndPoint.X),
+                            Math.Min(_rectStartPoint.Y, tempEndPoint.Y));
+                    _rect.Size = new Size(
+                        Math.Abs(_rectStartPoint.X - tempEndPoint.X),
+                        Math.Abs(_rectStartPoint.Y - tempEndPoint.Y));
 
-                    System.Drawing.Point tempEndPoint = e.Location;
-                    Rect.Location = new System.Drawing
-                        .Point(
-                            Math.Min(RectStartPoint.X, tempEndPoint.X),
-                            Math.Min(RectStartPoint.Y, tempEndPoint.Y));
-                    Rect.Size = new Size(
-                        Math.Abs(RectStartPoint.X - tempEndPoint.X),
-                        Math.Abs(RectStartPoint.Y - tempEndPoint.Y));
-
-                    pictureBox1.Invalidate(Rect);
+                    pictureBox1.Invalidate(_rect);
                 }
             }else if (_isPainting)
             {
@@ -165,26 +167,17 @@ namespace WindowsFormsApp1
         {
             if (_isSelect)
             {
-                if (pictureBox1.Image != null && Rect != Rectangle.Empty)
+                if (pictureBox1.Image != null && _rect != Rectangle.Empty)
                 {
                     using (Pen selectPen = new Pen(_colorDialog.Color, 4))
                     {
-                        e.Graphics.DrawRectangle(selectPen, Rect);
+                        e.Graphics.DrawRectangle(selectPen, _rect);
             
                     }
                 }
             }
         }
-
-
-        private void pictureBox1_DoubleClick(object sender, EventArgs e)
-        {
-            if (_isSelect)
-            {
-                Rect = new Rectangle();
-                pictureBox1.Invalidate();
-            }
-        }
+        
 
 
         
@@ -212,7 +205,7 @@ namespace WindowsFormsApp1
         {
             _isPainting = false;
         }
-        private void PaintOnPictureBox(System.Drawing.Point location)
+        private void PaintOnPictureBox(Point location)
 {
     if (pictureBox1.Image == null)
     {
@@ -238,10 +231,10 @@ namespace WindowsFormsApp1
             case "Triangle":
                 using (Brush brush = new SolidBrush(_paintColor))
                 {
-                    System.Drawing.Point[] points = {
-                        new System.Drawing.Point(location.X, location.Y - _paintBrushSize / 2),
-                        new System.Drawing.Point(location.X - _paintBrushSize / 2, location.Y + _paintBrushSize / 2),
-                        new System.Drawing.Point(location.X + _paintBrushSize / 2, location.Y + _paintBrushSize / 2)
+                    Point[] points = {
+                        new Point(location.X, location.Y - _paintBrushSize / 2),
+                        new Point(location.X - _paintBrushSize / 2, location.Y + _paintBrushSize / 2),
+                        new Point(location.X + _paintBrushSize / 2, location.Y + _paintBrushSize / 2)
                     };
                     g.FillPolygon(brush, points);
                 }
@@ -297,11 +290,8 @@ private PointF[] CreateStarPoints(int numPoints, PointF center, float outerRadiu
             byte[] pixels = new byte[byteCount];
             IntPtr ptrFirstPixel = bitmapData.Scan0;
 
-            System.Runtime.InteropServices.Marshal.Copy(ptrFirstPixel, pixels, 0, pixels.Length);
-
-            int heightInPixels = bitmapData.Height;
-            int widthInBytes = bitmapData.Width * bytesPerPixel;
-
+            Marshal.Copy(ptrFirstPixel, pixels, 0, pixels.Length);
+            
             for (int y = selectionArea.Top; y < selectionArea.Bottom; y++)
             {
                 int currentLine = y * bitmapData.Stride;
@@ -318,7 +308,7 @@ private PointF[] CreateStarPoints(int numPoints, PointF center, float outerRadiu
                 }
             }
 
-            System.Runtime.InteropServices.Marshal.Copy(pixels, 0, ptrFirstPixel, pixels.Length);
+            Marshal.Copy(pixels, 0, ptrFirstPixel, pixels.Length);
 
             originalImage.UnlockBits(bitmapData);
         }
@@ -328,11 +318,11 @@ private PointF[] CreateStarPoints(int numPoints, PointF center, float outerRadiu
 
             Bitmap xrayImage = (Bitmap)pictureBox1.Image;
 
-            ColorizeSelectedArea1(xrayImage, Rect, _colorDialog.Color);
+            ColorizeSelectedArea1(xrayImage, _rect, _colorDialog.Color);
 
             pictureBox2.Image = xrayImage;
         }
-        public static System.Drawing.Image ResizeImage(System.Drawing.Image image, Size size, bool preserveAspectRatio = true)
+        private static Image ResizeImage(Image image, Size size, bool preserveAspectRatio = true)
         {
             int newWidth;
             int newHeight;
@@ -352,10 +342,10 @@ private PointF[] CreateStarPoints(int numPoints, PointF center, float outerRadiu
                 newHeight = size.Height;
             }
 
-            System.Drawing.Image newImage = new Bitmap(newWidth, newHeight);
+            Image newImage = new Bitmap(newWidth, newHeight);
             using (Graphics graphicsHandle = Graphics.FromImage(newImage))
             {
-                graphicsHandle.InterpolationMode = System.Drawing.Drawing2D.InterpolationMode.HighQualityBicubic;
+                graphicsHandle.InterpolationMode = InterpolationMode.HighQualityBicubic;
                 graphicsHandle.DrawImage(image, 0, 0, newWidth, newHeight);
             }
 
@@ -387,9 +377,42 @@ private PointF[] CreateStarPoints(int numPoints, PointF center, float outerRadiu
         {
             if (openFileDialog1.ShowDialog() == DialogResult.OK)
             {
-                System.Drawing.Image originalImage = System.Drawing.Image.FromFile(openFileDialog1.FileName);
+                Image originalImage = Image.FromFile(openFileDialog1.FileName);
                 pictureBox1.Image = ResizeImage(originalImage, pictureBox1.Size);
             }
+            
+        }
+
+        private void pictureBox1_DragDrop(object sender, DragEventArgs e)
+        {
+            string[] files = (string[])e.Data.GetData((DataFormats.FileDrop));
+            if (files != null && files.Length > 0)
+            {
+                string filePath = files[0];
+                Image image = Image.FromFile(filePath);
+                pictureBox1.Image = ResizeImage(image, pictureBox1.Size);
+            }
+        }
+
+        private void pictureBox1_DragOver(object sender, DragEventArgs e)
+        {
+            e.Effect = DragDropEffects.Copy;
+        }
+
+        private void pictureBox1_DragEnter(object sender, DragEventArgs e)
+        {
+            e.Effect = DragDropEffects.Copy;
+        }
+
+        private void heatMapToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            // Bitmap image1 = ApplyHeatMapColorTransformation()
+            // ColorizeSelectedArea1(image1,Rect,_colorDialog.Color);
+            // pictureBox2.Image = image1;
+        }
+
+        private void pictureBox1_MouseClick(object sender, MouseEventArgs e)
+        {
             
         }
     }
