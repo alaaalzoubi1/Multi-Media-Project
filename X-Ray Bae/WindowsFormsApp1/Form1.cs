@@ -18,7 +18,7 @@ namespace WindowsFormsApp1
         private ColorDialog _colorDialog;
         private bool _isSelect = true;
         private string _brushType = "Triangle";
-       
+        private string[] files;
         public Form1()
         {
             
@@ -44,6 +44,7 @@ namespace WindowsFormsApp1
         {
             if (openFileDialog1.ShowDialog() == DialogResult.OK)
             {
+                pictureBox1.SizeMode = PictureBoxSizeMode.Normal;
                 Image originalImage = Image.FromFile(openFileDialog1.FileName);
                 pictureBox1.Image = ResizeImage(originalImage, pictureBox1.Size);
             }
@@ -55,6 +56,7 @@ namespace WindowsFormsApp1
 
         private void spareToolStripMenuItem_Click(object sender, EventArgs e)
         {
+            pictureBox2.SizeMode = PictureBoxSizeMode.Normal;
             Sepia sepia = new Sepia();
             Bitmap image1 = sepia.Apply((Bitmap)pictureBox1.Image);
             ColorizeSelectedArea1(image1,_rect,_colorDialog.Color);
@@ -62,11 +64,24 @@ namespace WindowsFormsApp1
 
         private void eraseEditingToolStripMenuItem_Click(object sender, EventArgs e)
         {
-            pictureBox2.Image = null;
+            if (files != null && files.Length > 0)
+            {
+                pictureBox2.SizeMode = PictureBoxSizeMode.Normal;
+                string filePath = files[0];
+                Image image = Image.FromFile(filePath);
+                pictureBox2.Image = ResizeImage(image, pictureBox2.Size);
+            }
+            else
+            {
+                pictureBox2.SizeMode = PictureBoxSizeMode.Normal;
+                pictureBox2.Image =Image.FromFile(openFileDialog1.FileName);;
+
+            }
         }
 
         private void hueModifierToolStripMenuItem_Click(object sender, EventArgs e)
         {
+            pictureBox2.SizeMode = PictureBoxSizeMode.Normal;
             HueModifier hueModifier = new HueModifier(200);
             Bitmap image1 = hueModifier.Apply((Bitmap)pictureBox1.Image);
             ColorizeSelectedArea1(image1,_rect,_colorDialog.Color);
@@ -75,6 +90,7 @@ namespace WindowsFormsApp1
 
         private void rotateChannelsToolStripMenuItem_Click(object sender, EventArgs e)
         {
+            pictureBox2.SizeMode = PictureBoxSizeMode.Normal;
             RotateChannels rotateChannels = new RotateChannels();
             Bitmap image1 = rotateChannels.Apply((Bitmap)pictureBox1.Image);
             ColorizeSelectedArea1(image1,_rect,_colorDialog.Color);
@@ -83,6 +99,7 @@ namespace WindowsFormsApp1
 
         private void invertToolStripMenuItem_Click(object sender, EventArgs e)
         {
+            pictureBox2.SizeMode = PictureBoxSizeMode.Normal;
             Invert invert = new Invert();
             Bitmap image1 = invert.Apply((Bitmap)pictureBox1.Image);
             ColorizeSelectedArea1(image1,_rect,_colorDialog.Color);
@@ -315,6 +332,7 @@ private PointF[] CreateStarPoints(int numPoints, PointF center, float outerRadiu
 
         private void ColorizeSelectedArea_Click(object sender, EventArgs e)
         {
+            pictureBox2.SizeMode = PictureBoxSizeMode.Normal;
 
             Bitmap xrayImage = (Bitmap)pictureBox1.Image;
 
@@ -377,6 +395,7 @@ private PointF[] CreateStarPoints(int numPoints, PointF center, float outerRadiu
         {
             if (openFileDialog1.ShowDialog() == DialogResult.OK)
             {
+                pictureBox1.SizeMode = PictureBoxSizeMode.Normal;
                 Image originalImage = Image.FromFile(openFileDialog1.FileName);
                 pictureBox1.Image = ResizeImage(originalImage, pictureBox1.Size);
             }
@@ -385,9 +404,10 @@ private PointF[] CreateStarPoints(int numPoints, PointF center, float outerRadiu
 
         private void pictureBox1_DragDrop(object sender, DragEventArgs e)
         {
-            string[] files = (string[])e.Data.GetData((DataFormats.FileDrop));
+             files = (string[])e.Data.GetData((DataFormats.FileDrop));
             if (files != null && files.Length > 0)
             {
+                pictureBox1.SizeMode = PictureBoxSizeMode.Normal;
                 string filePath = files[0];
                 Image image = Image.FromFile(filePath);
                 pictureBox1.Image = ResizeImage(image, pictureBox1.Size);
