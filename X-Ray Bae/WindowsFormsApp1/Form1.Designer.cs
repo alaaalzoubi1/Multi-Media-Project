@@ -47,6 +47,10 @@ namespace WindowsFormsApp1
             this.actionToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.selectToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.paintToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.toolStripMenuItem1 = new System.Windows.Forms.ToolStripMenuItem();
+            this.sizeToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.toolStripTextBox1 = new System.Windows.Forms.ToolStripTextBox();
+            this.dateToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.openFileDialog1 = new System.Windows.Forms.OpenFileDialog();
             this.button1 = new System.Windows.Forms.Button();
             this.tableLayoutPanel1 = new System.Windows.Forms.TableLayoutPanel();
@@ -59,6 +63,8 @@ namespace WindowsFormsApp1
             this.toolStripComboBox3 = new System.Windows.Forms.ToolStripComboBox();
             this.ColorizeSelectedArea = new System.Windows.Forms.Button();
             this.OpenImage = new System.Windows.Forms.Button();
+            this.dateTimePicker1 = new System.Windows.Forms.DateTimePicker();
+            this.compareToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.menuStrip1.SuspendLayout();
             this.tableLayoutPanel1.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.pictureBox2)).BeginInit();
@@ -68,7 +74,7 @@ namespace WindowsFormsApp1
             // 
             // menuStrip1
             // 
-            this.menuStrip1.Items.AddRange(new System.Windows.Forms.ToolStripItem[] { this.fileToolStripMenuItem, this.imageProccingToolStripMenuItem, this.actionToolStripMenuItem });
+            this.menuStrip1.Items.AddRange(new System.Windows.Forms.ToolStripItem[] { this.fileToolStripMenuItem, this.imageProccingToolStripMenuItem, this.actionToolStripMenuItem, this.compareToolStripMenuItem });
             this.menuStrip1.Location = new System.Drawing.Point(0, 0);
             this.menuStrip1.Name = "menuStrip1";
             this.menuStrip1.Size = new System.Drawing.Size(1099, 28);
@@ -155,7 +161,7 @@ namespace WindowsFormsApp1
             // 
             // actionToolStripMenuItem
             // 
-            this.actionToolStripMenuItem.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] { this.selectToolStripMenuItem, this.paintToolStripMenuItem });
+            this.actionToolStripMenuItem.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] { this.selectToolStripMenuItem, this.paintToolStripMenuItem, this.toolStripMenuItem1 });
             this.actionToolStripMenuItem.Name = "actionToolStripMenuItem";
             this.actionToolStripMenuItem.Size = new System.Drawing.Size(64, 24);
             this.actionToolStripMenuItem.Text = "Action";
@@ -163,16 +169,46 @@ namespace WindowsFormsApp1
             // selectToolStripMenuItem
             // 
             this.selectToolStripMenuItem.Name = "selectToolStripMenuItem";
-            this.selectToolStripMenuItem.Size = new System.Drawing.Size(116, 24);
+            this.selectToolStripMenuItem.Size = new System.Drawing.Size(120, 24);
             this.selectToolStripMenuItem.Text = "select";
             this.selectToolStripMenuItem.Click += new System.EventHandler(this.selectToolStripMenuItem_Click);
             // 
             // paintToolStripMenuItem
             // 
             this.paintToolStripMenuItem.Name = "paintToolStripMenuItem";
-            this.paintToolStripMenuItem.Size = new System.Drawing.Size(116, 24);
+            this.paintToolStripMenuItem.Size = new System.Drawing.Size(120, 24);
             this.paintToolStripMenuItem.Text = "paint";
             this.paintToolStripMenuItem.Click += new System.EventHandler(this.paintToolStripMenuItem_Click);
+            // 
+            // toolStripMenuItem1
+            // 
+            this.toolStripMenuItem1.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] { this.sizeToolStripMenuItem, this.dateToolStripMenuItem });
+            this.toolStripMenuItem1.Name = "toolStripMenuItem1";
+            this.toolStripMenuItem1.Size = new System.Drawing.Size(120, 24);
+            this.toolStripMenuItem1.Text = "search";
+            // 
+            // sizeToolStripMenuItem
+            // 
+            this.sizeToolStripMenuItem.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] { this.toolStripTextBox1 });
+            this.sizeToolStripMenuItem.Name = "sizeToolStripMenuItem";
+            this.sizeToolStripMenuItem.Size = new System.Drawing.Size(108, 24);
+            this.sizeToolStripMenuItem.Text = "size";
+            // 
+            // toolStripTextBox1
+            // 
+            this.toolStripTextBox1.Name = "toolStripTextBox1";
+            this.toolStripTextBox1.Size = new System.Drawing.Size(100, 27);
+            this.toolStripTextBox1.KeyDown += new System.Windows.Forms.KeyEventHandler(this.toolStripTextBox1_KeyDown);
+            // 
+            // dateToolStripMenuItem
+            // 
+            this.dateToolStripMenuItem.Name = "dateToolStripMenuItem";
+            this.dateToolStripMenuItem.Size = new System.Drawing.Size(108, 24);
+            this.dateToolStripMenuItem.Text = "date";
+            this.dateToolStripMenuItem.Click += new System.EventHandler(this.dateToolStripMenuItem_Click);
+            
+            
+
             // 
             // openFileDialog1
             // 
@@ -246,7 +282,7 @@ namespace WindowsFormsApp1
             this.toolStrip1.BackColor = System.Drawing.SystemColors.GradientActiveCaption;
             this.toolStrip1.Dock = System.Windows.Forms.DockStyle.None;
             this.toolStrip1.Items.AddRange(new System.Windows.Forms.ToolStripItem[] { this.BrushSize, this.toolStripComboBox2, this.BrushType, this.toolStripComboBox3 });
-            this.toolStrip1.Location = new System.Drawing.Point(493, 28);
+            this.toolStrip1.Location = new System.Drawing.Point(627, 30);
             this.toolStrip1.Name = "toolStrip1";
             this.toolStrip1.RenderMode = System.Windows.Forms.ToolStripRenderMode.Professional;
             this.toolStrip1.Size = new System.Drawing.Size(406, 28);
@@ -305,12 +341,30 @@ namespace WindowsFormsApp1
             this.OpenImage.UseVisualStyleBackColor = false;
             this.OpenImage.Click += new System.EventHandler(this.OpenImage_Click);
             // 
+            // dateTimePicker1
+            // 
+            this.dateTimePicker1.Format = System.Windows.Forms.DateTimePickerFormat.Short;
+            this.dateTimePicker1.Location = new System.Drawing.Point(496, 31);
+            this.dateTimePicker1.Margin = new System.Windows.Forms.Padding(1);
+            this.dateTimePicker1.Name = "dateTimePicker1";
+            this.dateTimePicker1.Size = new System.Drawing.Size(120, 22);
+            this.dateTimePicker1.TabIndex = 6;
+            this.dateTimePicker1.ValueChanged += new System.EventHandler(this.dateTimePicker1_ValueChanged);
+            // 
+            // compareToolStripMenuItem
+            // 
+            this.compareToolStripMenuItem.Name = "compareToolStripMenuItem";
+            this.compareToolStripMenuItem.Size = new System.Drawing.Size(82, 24);
+            this.compareToolStripMenuItem.Text = "Compare";
+            this.compareToolStripMenuItem.Click += new System.EventHandler(this.compareToolStripMenuItem_Click);
+            // 
             // Form1
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(8F, 16F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.BackColor = System.Drawing.SystemColors.ActiveCaption;
             this.ClientSize = new System.Drawing.Size(1099, 645);
+            this.Controls.Add(this.dateTimePicker1);
             this.Controls.Add(this.OpenImage);
             this.Controls.Add(this.ColorizeSelectedArea);
             this.Controls.Add(this.tableLayoutPanel1);
@@ -336,6 +390,18 @@ namespace WindowsFormsApp1
             this.PerformLayout();
         }
 
+        private System.Windows.Forms.ToolStripMenuItem compareToolStripMenuItem;
+
+        private System.Windows.Forms.ToolStripTextBox toolStripTextBox1;
+
+        private System.Windows.Forms.ToolStripMenuItem sizeToolStripMenuItem;
+
+        private System.Windows.Forms.DateTimePicker dateTimePicker1;
+
+        private System.Windows.Forms.ToolStripMenuItem dateToolStripMenuItem;
+
+        private System.Windows.Forms.ToolStripMenuItem toolStripMenuItem1;
+
         private System.Windows.Forms.ToolStripMenuItem heatMapToolStripMenuItem;
 
         private System.Windows.Forms.Button OpenImage;
@@ -349,7 +415,7 @@ namespace WindowsFormsApp1
 
         private System.Windows.Forms.ToolStripComboBox toolStripComboBox2;
 
-        private System.Windows.Forms.ToolStripLabel toolStripLabel1;
+        
 
         private System.Windows.Forms.ToolStrip toolStrip1;
 

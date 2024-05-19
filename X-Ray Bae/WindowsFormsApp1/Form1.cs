@@ -4,9 +4,12 @@ using System.Drawing;
 using System.Drawing.Drawing2D;
 using System.Drawing.Imaging;
 using System.IO;
+using System.Linq;
 using System.Runtime.InteropServices;
+using System.Text;
 using System.Windows.Forms;
 using AForge.Imaging.Filters;
+using System.Diagnostics;
 
 namespace WindowsFormsApp1
 {
@@ -24,6 +27,7 @@ namespace WindowsFormsApp1
             
             InitializeComponent();
         }
+        
 
         private void Form1_Load(object sender, EventArgs e)
         {
@@ -434,6 +438,102 @@ private PointF[] CreateStarPoints(int numPoints, PointF center, float outerRadiu
         private void pictureBox1_MouseClick(object sender, MouseEventArgs e)
         {
             
+        }
+   
+        private bool IsImage(FileInfo file)
+        {
+            string[] extensions = { ".jpg", ".jpeg", ".png", ".gif", ".bmp", ".tiff", ".ico" };
+            return extensions.Contains(file.Extension.ToLower());
+        }
+        
+
+        private void toolStripComboBox1_Click(object sender, EventArgs e)
+        {
+           // throw new System.NotImplementedException();
+        }
+
+        private DateTime selectedDate;
+
+        private void dateTimePicker1_ValueChanged(object sender, EventArgs e)
+        {
+            selectedDate = dateTimePicker1.Value;
+        }
+
+        private void dateToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            
+            using (FolderBrowserDialog folderDialog = new FolderBrowserDialog())
+            {
+                if (folderDialog.ShowDialog() == DialogResult.OK)
+                {
+                    string folderPath = folderDialog.SelectedPath;
+                   
+
+                    
+                    DateTime Date = dateTimePicker1.Value.Date;
+
+                    
+                    var files = new DirectoryInfo(folderPath).GetFiles("*.*", SearchOption.AllDirectories)
+                        .Where(file => IsImage(file) && file.LastWriteTime.Date == Date)
+                        .ToArray();
+                    
+                    
+                    StringBuilder sb = new StringBuilder();
+                    foreach (FileInfo file in files)
+                    {
+                        sb.AppendLine($"File: {file.FullName}, Last Modified: {file.LastWriteTime.ToShortDateString()}");
+                    }
+                    
+                    if (files.Length == 0)
+                    {
+                        MessageBox.Show("No matches found.", "Information", MessageBoxButtons.OK, MessageBoxIcon.Information);
+                    }
+                    else
+                    {
+                        MessageBox.Show(sb.ToString(), "Filtered Files", MessageBoxButtons.OK,MessageBoxIcon.Information);
+                    }
+                }
+            }
+        }
+
+        private void toolStripTextBox1_KeyDown(object sender, KeyEventArgs e)
+        {
+            if (e.KeyCode == Keys.Enter)
+            {
+                using (FolderBrowserDialog folderDialog = new FolderBrowserDialog())
+                {
+                    if (folderDialog.ShowDialog() == DialogResult.OK)
+                    {
+                        string folderPath = folderDialog.SelectedPath;
+                        double sizeB = double.Parse(toolStripTextBox1.Text);
+                        
+                        var files = new DirectoryInfo(folderPath).GetFiles("*.*", SearchOption.AllDirectories)
+                            .Where(file => IsImage(file) && file.Length == sizeB)
+                            .ToArray();
+                        StringBuilder sb = new StringBuilder();
+                        foreach (FileInfo file in files)
+                        {
+                            sb.AppendLine($"File: {file.FullName}, Size: {file.Length / 1024} KB");
+                        }
+                    
+                        if (files.Length == 0)
+                        {
+                            MessageBox.Show("No matches found.", "Information", MessageBoxButtons.OK, MessageBoxIcon.Information);
+                        }
+                        else
+                        {
+                            MessageBox.Show(sb.ToString(), "Filtered Files", MessageBoxButtons.OK,MessageBoxIcon.Information);
+                        }
+                    }
+                }
+                e.SuppressKeyPress = true; 
+            }
+        }
+
+        private void compareToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            Form2 f2 = new Form2();
+            f2.ShowDialog();
         }
     }
 }

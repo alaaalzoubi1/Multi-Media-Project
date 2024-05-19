@@ -37,3 +37,15 @@ C:\Users\Cco\Desktop\multimedia\Multi-Media-Project\X-Ray Bae\WindowsFormsApp1\b
 C:\Users\Cco\Desktop\multimedia\Multi-Media-Project\X-Ray Bae\WindowsFormsApp1\bin\Debug\WindowsFormsApp1.exe
 C:\Users\Cco\Desktop\multimedia\Multi-Media-Project\X-Ray Bae\WindowsFormsApp1\bin\Debug\WindowsFormsApp1.pdb
 C:\Users\Cco\Desktop\multimedia\Multi-Media-Project\X-Ray Bae\WindowsFormsApp1\obj\Debug\WindowsF.A1EEDF9B.Up2Date
+E:\C#_projects\Multi-Media-Project\X-Ray Bae\WindowsFormsApp1\bin\Debug\WindowsFormsApp1.exe.config
+E:\C#_projects\Multi-Media-Project\X-Ray Bae\WindowsFormsApp1\bin\Debug\WindowsFormsApp1.exe
+E:\C#_projects\Multi-Media-Project\X-Ray Bae\WindowsFormsApp1\bin\Debug\WindowsFormsApp1.pdb
+E:\C#_projects\Multi-Media-Project\X-Ray Bae\WindowsFormsApp1\obj\Debug\WindowsFormsApp1.csproj.AssemblyReference.cache
+E:\C#_projects\Multi-Media-Project\X-Ray Bae\WindowsFormsApp1\obj\Debug\WindowsFormsApp1.Form1.resources
+E:\C#_projects\Multi-Media-Project\X-Ray Bae\WindowsFormsApp1\obj\Debug\WindowsFormsApp1.Properties.Resources.resources
+E:\C#_projects\Multi-Media-Project\X-Ray Bae\WindowsFormsApp1\obj\Debug\WindowsFormsApp1.csproj.GenerateResource.cache
+E:\C#_projects\Multi-Media-Project\X-Ray Bae\WindowsFormsApp1\obj\Debug\WindowsFormsApp1.csproj.CoreCompileInputs.cache
+E:\C#_projects\Multi-Media-Project\X-Ray Bae\WindowsFormsApp1\obj\Debug\WindowsFormsApp1.csproj.CopyComplete
+E:\C#_projects\Multi-Media-Project\X-Ray Bae\WindowsFormsApp1\obj\Debug\WindowsFormsApp1.exe
+E:\C#_projects\Multi-Media-Project\X-Ray Bae\WindowsFormsApp1\obj\Debug\WindowsFormsApp1.pdb
+E:\C#_projects\Multi-Media-Project\X-Ray Bae\WindowsFormsApp1\obj\Debug\WindowsFormsApp1.Form2.resources
