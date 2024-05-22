@@ -44,6 +44,8 @@ namespace WindowsFormsApp1
             this.invertToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.heatMapToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.eraseEditingToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.lBFToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.hBFToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.actionToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.selectToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.paintToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
@@ -51,6 +53,7 @@ namespace WindowsFormsApp1
             this.sizeToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.toolStripTextBox1 = new System.Windows.Forms.ToolStripTextBox();
             this.dateToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.compareToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.openFileDialog1 = new System.Windows.Forms.OpenFileDialog();
             this.button1 = new System.Windows.Forms.Button();
             this.tableLayoutPanel1 = new System.Windows.Forms.TableLayoutPanel();
@@ -64,7 +67,6 @@ namespace WindowsFormsApp1
             this.ColorizeSelectedArea = new System.Windows.Forms.Button();
             this.OpenImage = new System.Windows.Forms.Button();
             this.dateTimePicker1 = new System.Windows.Forms.DateTimePicker();
-            this.compareToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.menuStrip1.SuspendLayout();
             this.tableLayoutPanel1.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.pictureBox2)).BeginInit();
@@ -112,7 +114,7 @@ namespace WindowsFormsApp1
             // 
             // imageProccingToolStripMenuItem
             // 
-            this.imageProccingToolStripMenuItem.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] { this.spareToolStripMenuItem, this.hueModifierToolStripMenuItem, this.rotateChannelsToolStripMenuItem, this.invertToolStripMenuItem, this.heatMapToolStripMenuItem, this.eraseEditingToolStripMenuItem });
+            this.imageProccingToolStripMenuItem.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] { this.spareToolStripMenuItem, this.hueModifierToolStripMenuItem, this.rotateChannelsToolStripMenuItem, this.invertToolStripMenuItem, this.heatMapToolStripMenuItem, this.eraseEditingToolStripMenuItem, this.lBFToolStripMenuItem, this.hBFToolStripMenuItem });
             this.imageProccingToolStripMenuItem.Name = "imageProccingToolStripMenuItem";
             this.imageProccingToolStripMenuItem.Size = new System.Drawing.Size(133, 24);
             this.imageProccingToolStripMenuItem.Text = "imageProcessing";
@@ -158,6 +160,20 @@ namespace WindowsFormsApp1
             this.eraseEditingToolStripMenuItem.Size = new System.Drawing.Size(181, 24);
             this.eraseEditingToolStripMenuItem.Text = "clear editing";
             this.eraseEditingToolStripMenuItem.Click += new System.EventHandler(this.eraseEditingToolStripMenuItem_Click);
+            // 
+            // lBFToolStripMenuItem
+            // 
+            this.lBFToolStripMenuItem.Name = "lBFToolStripMenuItem";
+            this.lBFToolStripMenuItem.Size = new System.Drawing.Size(181, 24);
+            this.lBFToolStripMenuItem.Text = "LBF";
+            this.lBFToolStripMenuItem.Click += new System.EventHandler(this.lBFToolStripMenuItem_Click);
+            // 
+            // hBFToolStripMenuItem
+            // 
+            this.hBFToolStripMenuItem.Name = "hBFToolStripMenuItem";
+            this.hBFToolStripMenuItem.Size = new System.Drawing.Size(181, 24);
+            this.hBFToolStripMenuItem.Text = "HBF";
+            this.hBFToolStripMenuItem.Click += new System.EventHandler(this.hBFToolStripMenuItem_Click);
             // 
             // actionToolStripMenuItem
             // 
@@ -206,9 +222,13 @@ namespace WindowsFormsApp1
             this.dateToolStripMenuItem.Size = new System.Drawing.Size(108, 24);
             this.dateToolStripMenuItem.Text = "date";
             this.dateToolStripMenuItem.Click += new System.EventHandler(this.dateToolStripMenuItem_Click);
-            
-            
-
+            // 
+            // compareToolStripMenuItem
+            // 
+            this.compareToolStripMenuItem.Name = "compareToolStripMenuItem";
+            this.compareToolStripMenuItem.Size = new System.Drawing.Size(82, 24);
+            this.compareToolStripMenuItem.Text = "Compare";
+            this.compareToolStripMenuItem.Click += new System.EventHandler(this.compareToolStripMenuItem_Click);
             // 
             // openFileDialog1
             // 
@@ -349,14 +369,6 @@ namespace WindowsFormsApp1
             this.dateTimePicker1.Name = "dateTimePicker1";
             this.dateTimePicker1.Size = new System.Drawing.Size(120, 22);
             this.dateTimePicker1.TabIndex = 6;
-            this.dateTimePicker1.ValueChanged += new System.EventHandler(this.dateTimePicker1_ValueChanged);
-            // 
-            // compareToolStripMenuItem
-            // 
-            this.compareToolStripMenuItem.Name = "compareToolStripMenuItem";
-            this.compareToolStripMenuItem.Size = new System.Drawing.Size(82, 24);
-            this.compareToolStripMenuItem.Text = "Compare";
-            this.compareToolStripMenuItem.Click += new System.EventHandler(this.compareToolStripMenuItem_Click);
             // 
             // Form1
             // 
@@ -389,6 +401,9 @@ namespace WindowsFormsApp1
             this.ResumeLayout(false);
             this.PerformLayout();
         }
+
+        private System.Windows.Forms.ToolStripMenuItem lBFToolStripMenuItem;
+        private System.Windows.Forms.ToolStripMenuItem hBFToolStripMenuItem;
 
         private System.Windows.Forms.ToolStripMenuItem compareToolStripMenuItem;
 
