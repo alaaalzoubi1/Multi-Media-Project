@@ -10,6 +10,7 @@ using System.Text;
 using System.Windows.Forms;
 using AForge.Imaging;
 using AForge.Imaging.Filters;
+using Bitmap = System.Drawing.Bitmap;
 using Image = System.Drawing.Image;
 
 
@@ -19,16 +20,28 @@ namespace WindowsFormsApp1
     {
         private bool _isPainting;
         private Color _paintColor = Color.Black;
-        private int _paintBrushSize = 5;
+        private  int _paintBrushSize = 1;
         private ColorDialog _colorDialog;
         private bool _isSelect = true;
         private string _brushType = "Triangle";
         private string[] _files;
 
+        private Bitmap bm ;
+        private Bitmap originalimage;
+        private Bitmap copyimage;
+        private Graphics g ;
+        private Point px, py;
+        private Pen p = new Pen(Color.Black,1  );
+        private Pen eraser = new Pen(Color.Transparent, 10);
+        private int index;
+        private int x, y, sX, sY, cX, cY;
+        
+        
         public Form1()
         {
 
             InitializeComponent();
+            
         }
 
 
@@ -161,11 +174,6 @@ namespace WindowsFormsApp1
                 _rectStartPoint = e.Location;
                 Invalidate();
             }
-            else
-            {
-                _isPainting = true;
-                PaintOnPictureBox(e.Location);
-            }
         }
 
         private void pictureBox1_MouseMove_1(object sender, MouseEventArgs e)
@@ -185,11 +193,14 @@ namespace WindowsFormsApp1
                     pictureBox1.Invalidate(_rect);
                 }
             }
-            else if (_isPainting)
-            {
-                PaintOnPictureBox(e.Location);
-            }
+            
         }
+
+      
+
+
+
+
 
         private void pictureBox1_Paint_1(object sender, PaintEventArgs e)
         {
@@ -213,10 +224,7 @@ namespace WindowsFormsApp1
 
         private void button1_Click_1(object sender, EventArgs e)
         {
-            if (_colorDialog.ShowDialog() == DialogResult.OK)
-            {
-                _paintColor = _colorDialog.Color;
-            }
+            
         }
 
         private void selectToolStripMenuItem_Click(object sender, EventArgs e)
@@ -227,25 +235,26 @@ namespace WindowsFormsApp1
         private void paintToolStripMenuItem_Click(object sender, EventArgs e)
         {
             _isSelect = false;
+            index = 1;
         }
 
         private void pictureBox1_MouseUp(object sender, MouseEventArgs e)
         {
-            _isPainting = false;
+            
         }
 
         private void PaintOnPictureBox(Point location)
         {
-            if (pictureBox1.Image == null)
+            if (pictureBox2.Image == null)
             {
-                pictureBox1.Image = new Bitmap(pictureBox1.Width, pictureBox1.Height);
+                pictureBox2.Image = new Bitmap(pictureBox2.Width, pictureBox2.Height);
             }
 
             if (_isPainting)
             {
 
 
-                using (Graphics g = Graphics.FromImage(pictureBox1.Image))
+                using (Graphics g = Graphics.FromImage(pictureBox2.Image))
                 {
                     switch (_brushType)
                     {
@@ -294,7 +303,7 @@ namespace WindowsFormsApp1
                 }
             }
 
-            pictureBox1.Invalidate();
+            pictureBox2.Invalidate();
         }
 
         private PointF[] createStarPoints(int numPoints, PointF center, float outerRadius, float innerRadius)
@@ -684,5 +693,309 @@ namespace WindowsFormsApp1
             return p;
         }
 
+        private void btn_color_Click(object sender, EventArgs e)
+        {
+            if (_colorDialog.ShowDialog() == DialogResult.OK)
+            {
+                _paintColor = _colorDialog.Color;
+                color_pic.BackColor = _colorDialog.Color;
+                p.Color = _paintColor;
+            }
+        }
+
+        private void btn_fill_Click(object sender, EventArgs e)
+        {
+            index = 7;
+            
+        }
+
+       
+
+        private void btn_eraser_Click(object sender, EventArgs e)
+        {
+            g = Graphics.FromImage(pictureBox2.Image);
+            index = 3;
+            _isSelect = false;
+            if (pictureBox2.Image != null)
+            {
+                originalimage = (Bitmap)pictureBox2.Image;
+                copyimage = (Bitmap)pictureBox1.Image;
+            }
+        }
+
+        private void btn_pencil_Click(object sender, EventArgs e)
+        {
+            g = Graphics.FromImage(pictureBox2.Image);
+            index = 2;
+            _isSelect = false;
+        }
+
+        private void btn_rect_Click(object sender, EventArgs e)
+        {
+            g = Graphics.FromImage(pictureBox2.Image);
+            index = 5;
+            _isSelect = false;
+            
+        }
+
+        private void btn_line_Click(object sender, EventArgs e)
+        { 
+            g = Graphics.FromImage(pictureBox2.Image);
+
+            index = 6;
+            _isSelect = false;
+            Console.WriteLine(bm);
+        }
+        private void btn_tri_Click(object sender, EventArgs e)
+        {
+            g = Graphics.FromImage(pictureBox2.Image);
+            index = 8;
+            _isSelect = false;        }
+
+        private void pictureBox2_MouseDown(object sender, MouseEventArgs e)
+        {
+            p.Width = _paintBrushSize;
+            eraser.Width = _paintBrushSize;
+            _isPainting = true;
+            if (index == 1)
+            {
+                PaintOnPictureBox(e.Location);
+            }
+            else if (index == 2)
+            {
+                py = e.Location;
+            }
+            else if (index == 3)
+            {
+                py = e.Location;
+            }
+          
+            
+                cX = e.X;
+                cY = e.Y;
+            
+            pictureBox2.Invalidate();
+        }
+
+
+        private void pictureBox2_MouseMove(object sender, MouseEventArgs e)
+        {
+            if (_isPainting)
+            {
+                if (index == 1)
+                {
+                    PaintOnPictureBox(e.Location);
+                }
+                else if (index == 2)
+                {
+              
+                    
+                        px = e.Location;
+                        g.DrawLine(p, px, py);
+                        py = px;
+                        
+                        
+                }
+                else if (index == 3)
+                {
+                    px = e.Location;
+                    // g.DrawLine(eraser,px,py);
+                    // originalimage = (Bitmap)pictureBox2.Image;
+                    // copyimage = (Bitmap)pictureBox1.Image;
+                    // originalimage.SetPixel(px.X,px.Y,copyimage.GetPixel(px.X,px.Y));
+                    // py = px;
+                    // pictureBox2.Image = originalimage; 
+                    g.CompositingMode = System.Drawing.Drawing2D.CompositingMode.SourceCopy;
+                    g.DrawLine(eraser, px, py);
+                    py = px;
+
+
+
+
+                }
+               
+
+                x = e.X;
+                y = e.Y;
+                sX = e.X - cX;
+                sY = e.Y - cY;
+            }
+            pictureBox2.Invalidate();
+        }
+
+
+        private void pictureBox2_MouseUp(object sender, MouseEventArgs e)
+        {
+            _isPainting = false;
+            sX = x - cX;
+            sY = y - cY;
+            if (index == 4)     
+            {
+                g.DrawEllipse(p,cX,cY,sX,sY);
+            }
+
+            if (index == 5)
+            { 
+                g.DrawRectangle(p,cX,cY,sX,sY);
+            }
+
+            if (index == 6 )
+            {
+                g.DrawLine(p,cX,cY,x,y);
+            }
+
+            if (index == 8)
+            {
+                // Define the three points of the triangle
+                Point point1 = new Point(cX, cY); // This will be the first vertex
+                Point point2 = new Point(cX + sX, cY); // Second vertex
+                Point point3 = new Point(cX, cY + sY); // Third vertex
+
+                // Create an array of points
+                Point[] trianglePoints = { point1, point2, point3 };
+
+                // Draw the triangle
+                g.DrawPolygon(p, trianglePoints);
+            }
+
+            if (index == 9)
+            {
+                // Define points that the curve will pass through
+                Point[] curvePoints = {
+                    new Point(cX, cY),
+                    new Point(cX + sX / 2, cY - sY), // Control point for the curve
+                    new Point(cX + sX, cY)
+                };
+
+                // Draw the curve
+                g.DrawCurve(p, curvePoints);
+            }
+
+            
+
+           
+            pictureBox2.Invalidate();
+        }
+
+        private void btn_ellipse_Click_1(object sender, EventArgs e)
+        {
+            g = Graphics.FromImage(pictureBox2.Image);
+            index = 4;
+            _isSelect = false;
+        }
+
+        private void pictureBox2_Paint(object sender, PaintEventArgs e)
+        {
+            if (_isPainting)
+            {
+
+
+                Graphics g = e.Graphics;
+                if (index == 4)
+                {
+                    g.DrawEllipse(p, cX, cY, sX, sY);
+                }
+
+                if (index == 5)
+                {
+                    g.DrawRectangle(p, cX, cY, sX, sY);
+                }
+
+                if (index == 6)
+                {
+                    g.DrawLine(p, cX, cY, x, y);
+                }
+                if (index == 8)
+                {
+                    // Define the three points of the triangle
+                    Point point1 = new Point(cX, cY); // This will be the first vertex
+                    Point point2 = new Point(cX + sX, cY); // Second vertex
+                    Point point3 = new Point(cX, cY + sY); // Third vertex
+                    
+                    // Create an array of points
+                    Point[] trianglePoints = { point1, point2, point3 };
+                    
+                    // Draw the triangle
+                    g.DrawPolygon(p, trianglePoints);
+
+                }
+
+                if (index == 9)
+                {
+                    // Define points that the curve will pass through
+                    Point[] curvePoints = {
+                        new Point(cX, cY),
+                        new Point(cX + sX / 2, cY - sY), // Control point for the curve
+                        new Point(cX + sX, cY)
+                    };
+
+                    // Draw the curve
+                    g.DrawCurve(p, curvePoints);
+                }
+            }
+        }
+
+        private void validate(Bitmap bm, Stack<Point> sp, int x, int y, Color oldColor, Color newColor)
+        {
+            Color cx = bm.GetPixel(x, y);
+            if (cx == oldColor)
+            {
+                sp.Push(new Point(x,y));
+                bm.SetPixel(x,y,newColor);
+            }
+        }
+        public void fill(Bitmap bm, int x, int y, Color color)
+        {
+            Color old_color = bm.GetPixel(x, y);
+            Stack<Point> pixel = new Stack<Point>();
+            pixel.Push(new Point(x,y));
+            bm.SetPixel(x,y,color);
+            if (old_color == color) 
+            {
+              
+                return;
+            }
+
+            while (pixel.Count > 0)
+            {
+                Console.WriteLine(pixel.Count);
+                Point pt = (Point)pixel.Pop();
+                if (pt.X > 0 && pt.Y > 0 && pt.X < bm.Width - 1 && pt.Y < bm.Height - 1)
+                {
+                    validate(bm,pixel,pt.X-1,pt.Y,old_color,color);
+                    validate(bm,pixel,pt.X,pt.Y,old_color,color);
+                    validate(bm,pixel,pt.X+1,pt.Y,old_color,color);
+                    validate(bm,pixel,pt.X,pt.Y+1,old_color,color);
+
+
+                }
+            }
+        }
+
+        static Point set_point(PictureBox pb, Point pt)
+        {
+            float pX = 1f * pb.Image.Width / pb.Width;
+            float pY = 1f * pb.Image.Height / pb.Height;
+            return new Point((int)(pt.X * pX), (int)(pt.Y* pY));
+        }
+
+       
+
+        private void pictureBox2_MouseClick(object sender, MouseEventArgs e)
+        {
+            if (index == 7)
+            {
+                bm =(Bitmap) pictureBox2.Image;
+                Point point = set_point(pictureBox2, e.Location);
+                fill(bm,point.X,point.Y,_paintColor);
+            }
+        }
+
+        private void button2_Click(object sender, EventArgs e)
+        {
+            g = Graphics.FromImage(pictureBox2.Image);
+            index = 9;
+            _isSelect = false;
+        }
     }
 }
