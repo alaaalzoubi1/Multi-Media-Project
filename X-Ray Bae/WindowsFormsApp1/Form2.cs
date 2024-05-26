@@ -49,22 +49,7 @@ namespace WindowsFormsApp1
                 pictureBox2.Image = originalImage;
             }        }
 
-        private int CountBlackPixels(Bitmap bmp)
-        {
-            int count = 0;
-            for (int i = 0; i < bmp.Width; i++)
-            {
-                for (int j = 0; j < bmp.Height; j++)
-                {
-                    Color pixelColor = bmp.GetPixel(i, j);
-                    if (pixelColor.R == 255 && pixelColor.G == 255 && pixelColor.B == 255)
-                    {
-                        count++;
-                    }
-                }
-            }
-            return count;
-        }
+       
 
         public int CountBrightPixels(Bitmap bitmap, float brightnessThreshold)
         {
@@ -98,14 +83,16 @@ namespace WindowsFormsApp1
             Bitmap img1 = new Bitmap(pictureBox1.Image);
             Bitmap img2 = new Bitmap(pictureBox2.Image);
 
-            int blackPixelsImg1 = CountBlackPixels(img1);
-            int blackPixelsImg2 = CountBlackPixels(img2);
-
-            if (Math.Abs(blackPixelsImg1 - blackPixelsImg2) <= 50) // tolerance value
+            int blackPixelsImg1 = CountBrightPixels(img1,128);
+            int blackPixelsImg2 = CountBrightPixels(img2,128);
+            int result = Math.Abs(blackPixelsImg1 - blackPixelsImg2);
+            Console.WriteLine(blackPixelsImg1);
+            Console.WriteLine(blackPixelsImg2);
+            if (result  <=  50) // tolerance value
             {
                 MessageBox.Show("There is no advance in treatment");
             }
-            else if (blackPixelsImg1 > blackPixelsImg2)
+            else if (blackPixelsImg1 < blackPixelsImg2)
             {
                 MessageBox.Show("There is advancement in sickness (more sick)");
             }

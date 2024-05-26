@@ -1,4 +1,5 @@
-﻿using System.Windows.Forms;
+﻿using System.Drawing;
+using System.Windows.Forms;
 
 namespace WindowsFormsApp1
 {
@@ -68,6 +69,10 @@ namespace WindowsFormsApp1
             this.OpenImage = new System.Windows.Forms.Button();
             this.dateTimePicker1 = new System.Windows.Forms.DateTimePicker();
             this.panel1 = new System.Windows.Forms.Panel();
+            this.button3 = new System.Windows.Forms.Button();
+            this.share_btn = new System.Windows.Forms.Button();
+            this.record_btn = new System.Windows.Forms.Button();
+            this.textBox1 = new System.Windows.Forms.TextBox();
             this.color_pic = new System.Windows.Forms.Button();
             this.btn_line = new System.Windows.Forms.Button();
             this.btn_rect = new System.Windows.Forms.Button();
@@ -77,8 +82,9 @@ namespace WindowsFormsApp1
             this.btn_fill = new System.Windows.Forms.Button();
             this.btn_color = new System.Windows.Forms.Button();
             this.panel2 = new System.Windows.Forms.Panel();
-            this.btn_tri = new System.Windows.Forms.Button();
+            this.text_btn = new System.Windows.Forms.Button();
             this.button2 = new System.Windows.Forms.Button();
+            this.btn_tri = new System.Windows.Forms.Button();
             this.menuStrip1.SuspendLayout();
             this.tableLayoutPanel1.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.pictureBox2)).BeginInit();
@@ -383,6 +389,7 @@ namespace WindowsFormsApp1
             // 
             // dateTimePicker1
             // 
+            this.dateTimePicker1.CalendarMonthBackground = System.Drawing.SystemColors.InactiveCaption;
             this.dateTimePicker1.Format = System.Windows.Forms.DateTimePickerFormat.Short;
             this.dateTimePicker1.Location = new System.Drawing.Point(496, 31);
             this.dateTimePicker1.Margin = new System.Windows.Forms.Padding(1);
@@ -393,16 +400,83 @@ namespace WindowsFormsApp1
             // panel1
             // 
             this.panel1.BackColor = System.Drawing.Color.SteelBlue;
+            this.panel1.Controls.Add(this.button3);
+            this.panel1.Controls.Add(this.share_btn);
+            this.panel1.Controls.Add(this.record_btn);
+            this.panel1.Controls.Add(this.textBox1);
             this.panel1.Controls.Add(this.color_pic);
             this.panel1.Location = new System.Drawing.Point(3, 67);
             this.panel1.Name = "panel1";
             this.panel1.Size = new System.Drawing.Size(1392, 111);
             this.panel1.TabIndex = 7;
             // 
+            // button3
+            // 
+            this.button3.FlatAppearance.BorderColor = System.Drawing.Color.SteelBlue;
+            this.button3.FlatAppearance.BorderSize = 0;
+            this.button3.FlatAppearance.MouseDownBackColor = System.Drawing.Color.Teal;
+            this.button3.FlatAppearance.MouseOverBackColor = System.Drawing.Color.PowderBlue;
+            this.button3.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
+            this.button3.ForeColor = System.Drawing.Color.White;
+            this.button3.Image = ((System.Drawing.Image)(resources.GetObject("button3.Image")));
+            this.button3.Location = new System.Drawing.Point(3, 0);
+            this.button3.Name = "button3";
+            this.button3.Size = new System.Drawing.Size(85, 77);
+            this.button3.TabIndex = 11;
+            this.button3.TextAlign = System.Drawing.ContentAlignment.BottomCenter;
+            this.button3.UseVisualStyleBackColor = true;
+            this.button3.Click += new System.EventHandler(this.button3_Click);
+            // 
+            // share_btn
+            // 
+            this.share_btn.BackColor = System.Drawing.Color.SteelBlue;
+            this.share_btn.FlatAppearance.BorderColor = System.Drawing.Color.SteelBlue;
+            this.share_btn.FlatAppearance.BorderSize = 0;
+            this.share_btn.FlatAppearance.MouseDownBackColor = System.Drawing.Color.Teal;
+            this.share_btn.FlatAppearance.MouseOverBackColor = System.Drawing.Color.PowderBlue;
+            this.share_btn.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
+            this.share_btn.ForeColor = System.Drawing.Color.Black;
+            this.share_btn.Image = ((System.Drawing.Image)(resources.GetObject("share_btn.Image")));
+            this.share_btn.Location = new System.Drawing.Point(528, 6);
+            this.share_btn.Name = "share_btn";
+            this.share_btn.Size = new System.Drawing.Size(50, 51);
+            this.share_btn.TabIndex = 11;
+            this.share_btn.TextAlign = System.Drawing.ContentAlignment.BottomCenter;
+            this.share_btn.UseVisualStyleBackColor = false;
+            this.share_btn.Click += new System.EventHandler(this.share_btn_Click);
+            // 
+            // record_btn
+            // 
+            this.record_btn.FlatAppearance.BorderColor = System.Drawing.Color.SteelBlue;
+            this.record_btn.FlatAppearance.BorderSize = 0;
+            this.record_btn.FlatAppearance.MouseDownBackColor = System.Drawing.Color.Teal;
+            this.record_btn.FlatAppearance.MouseOverBackColor = System.Drawing.Color.PowderBlue;
+            this.record_btn.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
+            this.record_btn.ForeColor = System.Drawing.Color.White;
+            this.record_btn.Image = ((System.Drawing.Image)(resources.GetObject("record_btn.Image")));
+            this.record_btn.Location = new System.Drawing.Point(595, 6);
+            this.record_btn.Name = "record_btn";
+            this.record_btn.Size = new System.Drawing.Size(50, 51);
+            this.record_btn.TabIndex = 11;
+            this.record_btn.TextAlign = System.Drawing.ContentAlignment.BottomCenter;
+            this.record_btn.UseVisualStyleBackColor = true;
+            this.record_btn.Click += new System.EventHandler(this.record_btn_Click);
+            // 
+            // textBox1
+            // 
+            this.textBox1.BackColor = System.Drawing.SystemColors.Info;
+            this.textBox1.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
+            this.textBox1.Location = new System.Drawing.Point(1272, 60);
+            this.textBox1.Name = "textBox1";
+            this.textBox1.Size = new System.Drawing.Size(120, 22);
+            this.textBox1.TabIndex = 2;
+            this.textBox1.TextChanged += new System.EventHandler(this.textBox1_TextChanged);
+            this.textBox1.KeyDown += new System.Windows.Forms.KeyEventHandler(this.textBox1_KeyDown);
+            // 
             // color_pic
             // 
-            this.color_pic.BackColor = System.Drawing.Color.White;
-            this.color_pic.Location = new System.Drawing.Point(767, 6);
+            this.color_pic.BackColor = System.Drawing.Color.WhiteSmoke;
+            this.color_pic.Location = new System.Drawing.Point(744, 9);
             this.color_pic.Name = "color_pic";
             this.color_pic.Size = new System.Drawing.Size(55, 48);
             this.color_pic.TabIndex = 1;
@@ -504,7 +578,7 @@ namespace WindowsFormsApp1
             this.btn_fill.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
             this.btn_fill.ForeColor = System.Drawing.Color.White;
             this.btn_fill.Image = ((System.Drawing.Image)(resources.GetObject("btn_fill.Image")));
-            this.btn_fill.Location = new System.Drawing.Point(217, 3);
+            this.btn_fill.Location = new System.Drawing.Point(282, 3);
             this.btn_fill.Name = "btn_fill";
             this.btn_fill.Size = new System.Drawing.Size(54, 54);
             this.btn_fill.TabIndex = 2;
@@ -521,7 +595,7 @@ namespace WindowsFormsApp1
             this.btn_color.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
             this.btn_color.ForeColor = System.Drawing.Color.White;
             this.btn_color.Image = ((System.Drawing.Image)(resources.GetObject("btn_color.Image")));
-            this.btn_color.Location = new System.Drawing.Point(277, 3);
+            this.btn_color.Location = new System.Drawing.Point(230, 3);
             this.btn_color.Name = "btn_color";
             this.btn_color.Size = new System.Drawing.Size(59, 54);
             this.btn_color.TabIndex = 1;
@@ -532,36 +606,37 @@ namespace WindowsFormsApp1
             // panel2
             // 
             this.panel2.BackColor = System.Drawing.Color.CadetBlue;
+            this.panel2.Controls.Add(this.text_btn);
             this.panel2.Controls.Add(this.button2);
             this.panel2.Controls.Add(this.btn_tri);
             this.panel2.Controls.Add(this.btn_line);
             this.panel2.Controls.Add(this.btn_pencil);
+            this.panel2.Controls.Add(this.btn_color);
             this.panel2.Controls.Add(this.btn_rect);
             this.panel2.Controls.Add(this.btn_ellipse);
             this.panel2.Controls.Add(this.btn_eraser);
             this.panel2.Controls.Add(this.btn_fill);
-            this.panel2.Controls.Add(this.btn_color);
-            this.panel2.Location = new System.Drawing.Point(864, 67);
+            this.panel2.Location = new System.Drawing.Point(808, 67);
             this.panel2.Name = "panel2";
-            this.panel2.Size = new System.Drawing.Size(531, 57);
+            this.panel2.Size = new System.Drawing.Size(587, 57);
             this.panel2.TabIndex = 8;
             // 
-            // btn_tri
+            // text_btn
             // 
-            this.btn_tri.FlatAppearance.BorderColor = System.Drawing.Color.SteelBlue;
-            this.btn_tri.FlatAppearance.BorderSize = 0;
-            this.btn_tri.FlatAppearance.MouseDownBackColor = System.Drawing.Color.Teal;
-            this.btn_tri.FlatAppearance.MouseOverBackColor = System.Drawing.Color.PowderBlue;
-            this.btn_tri.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
-            this.btn_tri.ForeColor = System.Drawing.Color.White;
-            this.btn_tri.Image = ((System.Drawing.Image)(resources.GetObject("btn_tri.Image")));
-            this.btn_tri.Location = new System.Drawing.Point(6, 3);
-            this.btn_tri.Name = "btn_tri";
-            this.btn_tri.Size = new System.Drawing.Size(50, 51);
-            this.btn_tri.TabIndex = 8;
-            this.btn_tri.TextAlign = System.Drawing.ContentAlignment.BottomCenter;
-            this.btn_tri.UseVisualStyleBackColor = true;
-            this.btn_tri.Click += new System.EventHandler(this.btn_tri_Click);
+            this.text_btn.FlatAppearance.BorderColor = System.Drawing.Color.SteelBlue;
+            this.text_btn.FlatAppearance.BorderSize = 0;
+            this.text_btn.FlatAppearance.MouseDownBackColor = System.Drawing.Color.Teal;
+            this.text_btn.FlatAppearance.MouseOverBackColor = System.Drawing.Color.PowderBlue;
+            this.text_btn.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
+            this.text_btn.ForeColor = System.Drawing.Color.White;
+            this.text_btn.Image = ((System.Drawing.Image)(resources.GetObject("text_btn.Image")));
+            this.text_btn.Location = new System.Drawing.Point(534, 3);
+            this.text_btn.Name = "text_btn";
+            this.text_btn.Size = new System.Drawing.Size(50, 51);
+            this.text_btn.TabIndex = 10;
+            this.text_btn.TextAlign = System.Drawing.ContentAlignment.BottomCenter;
+            this.text_btn.UseVisualStyleBackColor = true;
+            this.text_btn.Click += new System.EventHandler(this.text_btn_Click);
             // 
             // button2
             // 
@@ -579,6 +654,23 @@ namespace WindowsFormsApp1
             this.button2.TextAlign = System.Drawing.ContentAlignment.BottomCenter;
             this.button2.UseVisualStyleBackColor = true;
             this.button2.Click += new System.EventHandler(this.button2_Click);
+            // 
+            // btn_tri
+            // 
+            this.btn_tri.FlatAppearance.BorderColor = System.Drawing.Color.SteelBlue;
+            this.btn_tri.FlatAppearance.BorderSize = 0;
+            this.btn_tri.FlatAppearance.MouseDownBackColor = System.Drawing.Color.Teal;
+            this.btn_tri.FlatAppearance.MouseOverBackColor = System.Drawing.Color.PowderBlue;
+            this.btn_tri.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
+            this.btn_tri.ForeColor = System.Drawing.Color.White;
+            this.btn_tri.Image = ((System.Drawing.Image)(resources.GetObject("btn_tri.Image")));
+            this.btn_tri.Location = new System.Drawing.Point(6, 3);
+            this.btn_tri.Name = "btn_tri";
+            this.btn_tri.Size = new System.Drawing.Size(50, 51);
+            this.btn_tri.TabIndex = 8;
+            this.btn_tri.TextAlign = System.Drawing.ContentAlignment.BottomCenter;
+            this.btn_tri.UseVisualStyleBackColor = true;
+            this.btn_tri.Click += new System.EventHandler(this.btn_tri_Click);
             // 
             // Form1
             // 
@@ -612,10 +704,21 @@ namespace WindowsFormsApp1
             this.toolStrip1.ResumeLayout(false);
             this.toolStrip1.PerformLayout();
             this.panel1.ResumeLayout(false);
+            this.panel1.PerformLayout();
             this.panel2.ResumeLayout(false);
             this.ResumeLayout(false);
             this.PerformLayout();
         }
+
+        private System.Windows.Forms.Button button3;
+
+        private System.Windows.Forms.Button share_btn;
+
+        private System.Windows.Forms.Button record_btn;
+
+        private System.Windows.Forms.TextBox textBox1;
+
+        private System.Windows.Forms.Button text_btn;
 
         private System.Windows.Forms.Button button2;
 

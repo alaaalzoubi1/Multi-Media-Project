@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Drawing;
 using System.Drawing.Drawing2D;
 using System.Drawing.Imaging;
@@ -12,12 +13,14 @@ using AForge.Imaging;
 using AForge.Imaging.Filters;
 using Bitmap = System.Drawing.Bitmap;
 using Image = System.Drawing.Image;
-
-
+using NAudio.Wave;
 namespace WindowsFormsApp1
 {
     public partial class Form1 : Form
     {
+        private WaveInEvent waveIn;
+        private WaveFileWriter waveWriter;
+        private bool isRecording = false;
         private bool _isPainting;
         private Color _paintColor = Color.Black;
         private  int _paintBrushSize = 1;
@@ -35,12 +38,13 @@ namespace WindowsFormsApp1
         private Pen eraser = new Pen(Color.Transparent, 10);
         private int index;
         private int x, y, sX, sY, cX, cY;
-        
+        private Point textLocation;
         
         public Form1()
         {
 
             InitializeComponent();
+            InitializeVoiceRecorder();
             
         }
 
@@ -193,6 +197,7 @@ namespace WindowsFormsApp1
                     pictureBox1.Invalidate(_rect);
                 }
             }
+            pictureBox1.Invalidate();
             
         }
 
@@ -870,6 +875,14 @@ namespace WindowsFormsApp1
                 // Draw the curve
                 g.DrawCurve(p, curvePoints);
             }
+            if (index == 10)
+            {
+       
+                textLocation = new Point(e.X, e.Y);
+                textBox1.Visible = true;
+                textBox1.Focus();
+            }
+
 
             
 
@@ -932,6 +945,7 @@ namespace WindowsFormsApp1
                     // Draw the curve
                     g.DrawCurve(p, curvePoints);
                 }
+
             }
         }
 
@@ -996,6 +1010,158 @@ namespace WindowsFormsApp1
             g = Graphics.FromImage(pictureBox2.Image);
             index = 9;
             _isSelect = false;
+        }
+
+        private void text_btn_Click(object sender, EventArgs e)
+        {
+            g = Graphics.FromImage(pictureBox2.Image);
+            index = 10;
+            _isSelect = false;        
+        }
+
+        private void textBox1_TextChanged(object sender, EventArgs e)
+        {
+            if (textBox1.Text.Length == 15)
+            {
+                Console.WriteLine(textLocation);
+                textBox1.Visible = false;
+
+                // Draw the text at the recorded location
+                using (Graphics g = Graphics.FromImage(pictureBox2.Image))
+                {
+                    using (Font font = new Font("Arial", 16))
+                    {
+                        using (Brush brush = new SolidBrush(Color.Black))
+                        {
+                            g.DrawString(textBox1.Text, font, brush, textLocation);
+                        }
+                    }
+                }
+
+                // Refresh the PictureBox to show the updated image
+                pictureBox2.Refresh();
+
+                // Clear the TextBox for the next input
+                textBox1.Text = string.Empty;
+            }
+        }
+
+
+       
+
+        private void textBox1_KeyDown(object sender, KeyEventArgs e)
+        {
+            if (e.KeyCode == Keys.Enter)
+            {
+                Console.WriteLine(textLocation);
+                textBox1.Visible = false;
+
+                // Draw the text at the recorded location
+                using (Graphics g = Graphics.FromImage(pictureBox2.Image))
+                {
+                    using (Font font = new Font("Arial", _paintBrushSize))
+                    {
+                        using (Brush brush = new SolidBrush(_paintColor))
+                        {
+                            g.DrawString(textBox1.Text, font, brush, textLocation);
+                        }
+                    }
+                }
+
+                // Refresh the PictureBox to show the updated image
+                pictureBox2.Refresh();
+
+                // Clear the TextBox for the next input
+                textBox1.Text = string.Empty;
+            }
+        }
+
+        private void record_btn_Click(object sender, EventArgs e)
+        {
+            if (!isRecording)
+            {
+                // Check if the user has selected a file path with the.wav extension
+                SaveFileDialog saveFileDialog = new SaveFileDialog();
+                if (saveFileDialog.ShowDialog() == DialogResult.OK)
+                {
+                    string filePath = saveFileDialog.FileName;
+                    // Ensure the file path ends with ".wav"
+                    if (!filePath.EndsWith(".wav"))
+                    {
+                        filePath += ".wav";
+                    }
+
+                    // Configure the WaveFileWriter with the chosen file path and the current WaveFormat
+                    waveWriter = new WaveFileWriter(filePath, waveIn.WaveFormat);
+                    waveIn.DataAvailable += (sender2, e2) =>
+                    {
+                        waveWriter.Write(e2.Buffer, 0, e2.BytesRecorded);
+                        waveWriter.Flush();
+                    };
+
+                    // Start recording audio
+                    waveIn.StartRecording();
+                    isRecording = true;
+                    // record_btn.Text = "Stop Recording";
+                }
+            }
+            else
+            {
+                // Stop recording audio
+                waveIn.StopRecording();
+                waveIn.Dispose();
+                waveWriter.Dispose();
+                isRecording = false;
+                // record_btn.Text = "Start Recording";
+            }
+            
+        }
+        private void InitializeVoiceRecorder()
+        {
+            waveIn = new WaveInEvent();
+            waveIn.WaveFormat = new WaveFormat(44100, 1); // Sample rate and channels
+        }
+
+        private void share_btn_Click(object sender, EventArgs e)
+        {
+            // Save the image to a temporary file
+            string tempFilePath = Path.GetTempFileName();
+            pictureBox2.Image.Save(tempFilePath, ImageFormat.Jpeg); // Use the appropriate format
+
+            // Create the Telegram URI
+            string message = "Check this out!"; // Your message here
+            string phoneNumber = "+963 962 190 786"; // Recipient's phone number here
+            string telegramUri = $"tg://msg?text={phoneNumber}";
+
+            // Start the process to open the Telegram app
+            Process.Start(telegramUri);
+        }
+        private byte[] ImageToByteArray(Image image)
+        {
+            using (var ms = new MemoryStream())
+            {
+                image.Save(ms, System.Drawing.Imaging.ImageFormat.Png);
+                return ms.ToArray();
+            }
+        }
+
+        private void button3_Click(object sender, EventArgs e)
+        {
+            CropImage(_rect);
+        }
+        private void CropImage(Rectangle cropRect)
+        {
+            // Create a new Bitmap for the cropped image
+            Bitmap croppedImage = new Bitmap(cropRect.Width, cropRect.Height);
+
+            // Draw the cropped area onto the new Bitmap
+            using (Graphics g = Graphics.FromImage(croppedImage))
+            {
+                g.DrawImage(pictureBox1.Image, new Rectangle(0, 0, croppedImage.Width, croppedImage.Height), cropRect, GraphicsUnit.Pixel);
+            }
+
+            // Display the cropped image in another PictureBox
+            pictureBox2.Image = croppedImage;
         }
     }
 }
