@@ -69,6 +69,7 @@ namespace WindowsFormsApp1
             this.OpenImage = new System.Windows.Forms.Button();
             this.dateTimePicker1 = new System.Windows.Forms.DateTimePicker();
             this.panel1 = new System.Windows.Forms.Panel();
+            this.report = new System.Windows.Forms.Button();
             this.button3 = new System.Windows.Forms.Button();
             this.share_btn = new System.Windows.Forms.Button();
             this.record_btn = new System.Windows.Forms.Button();
@@ -396,10 +397,12 @@ namespace WindowsFormsApp1
             this.dateTimePicker1.Name = "dateTimePicker1";
             this.dateTimePicker1.Size = new System.Drawing.Size(120, 22);
             this.dateTimePicker1.TabIndex = 6;
+            this.dateTimePicker1.ValueChanged += new System.EventHandler(this.dateTimePicker1_ValueChanged);
             // 
             // panel1
             // 
             this.panel1.BackColor = System.Drawing.Color.SteelBlue;
+            this.panel1.Controls.Add(this.report);
             this.panel1.Controls.Add(this.button3);
             this.panel1.Controls.Add(this.share_btn);
             this.panel1.Controls.Add(this.record_btn);
@@ -409,6 +412,24 @@ namespace WindowsFormsApp1
             this.panel1.Name = "panel1";
             this.panel1.Size = new System.Drawing.Size(1392, 111);
             this.panel1.TabIndex = 7;
+            // 
+            // report
+            // 
+            this.report.BackColor = System.Drawing.Color.SteelBlue;
+            this.report.FlatAppearance.BorderColor = System.Drawing.Color.SteelBlue;
+            this.report.FlatAppearance.BorderSize = 0;
+            this.report.FlatAppearance.MouseDownBackColor = System.Drawing.Color.Teal;
+            this.report.FlatAppearance.MouseOverBackColor = System.Drawing.Color.PowderBlue;
+            this.report.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
+            this.report.ForeColor = System.Drawing.Color.Black;
+            this.report.Image = ((System.Drawing.Image)(resources.GetObject("report.Image")));
+            this.report.Location = new System.Drawing.Point(472, 6);
+            this.report.Name = "report";
+            this.report.Size = new System.Drawing.Size(50, 51);
+            this.report.TabIndex = 12;
+            this.report.TextAlign = System.Drawing.ContentAlignment.BottomCenter;
+            this.report.UseVisualStyleBackColor = false;
+            this.report.Click += new System.EventHandler(this.report_Click);
             // 
             // button3
             // 
@@ -709,6 +730,8 @@ namespace WindowsFormsApp1
             this.ResumeLayout(false);
             this.PerformLayout();
         }
+
+        private System.Windows.Forms.Button report;
 
         private System.Windows.Forms.Button button3;
 

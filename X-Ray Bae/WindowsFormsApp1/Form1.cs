@@ -1163,5 +1163,17 @@ namespace WindowsFormsApp1
             // Display the cropped image in another PictureBox
             pictureBox2.Image = croppedImage;
         }
+
+        private void dateTimePicker1_ValueChanged(object sender, EventArgs e)
+        {
+            
+        }
+        
+        public Image ImageFromPictureBox => pictureBox1.Image;
+        private void report_Click(object sender, EventArgs e)
+        {
+            Form3 f3 = new Form3();
+            f3.ShowDialog();
+        }
     }
 }
