@@ -8,19 +8,26 @@ using System.IO;
 using System.Linq;
 using System.Runtime.InteropServices;
 using System.Text;
+
 using System.Windows.Forms;
 using AForge.Imaging;
 using AForge.Imaging.Filters;
+
+using Google.Apis.Auth.OAuth2;
+using Google.Apis.Drive.v3;
+using Google.Apis.Services;
 using Bitmap = System.Drawing.Bitmap;
 using Image = System.Drawing.Image;
 using NAudio.Wave;
+
+
 namespace WindowsFormsApp1
 {
     public partial class Form1 : Form
     {
-        private WaveInEvent waveIn;
-        private WaveFileWriter waveWriter;
-        private bool isRecording = false;
+        private WaveInEvent _waveIn;
+        private WaveFileWriter _waveWriter;
+        private bool _isRecording = false;
         private bool _isPainting;
         private Color _paintColor = Color.Black;
         private  int _paintBrushSize = 1;
@@ -28,6 +35,10 @@ namespace WindowsFormsApp1
         private bool _isSelect = true;
         private string _brushType = "Triangle";
         private string[] _files;
+        
+        private readonly string _drive = "alaa.json";
+        private readonly string _folderId = "1JcdTBYUOW8BtJRYUnazl6ITfe8hrMRaT";
+        private string _link;
 
         private Bitmap bm ;
         private Bitmap originalimage;
@@ -1078,7 +1089,7 @@ namespace WindowsFormsApp1
 
         private void record_btn_Click(object sender, EventArgs e)
         {
-            if (!isRecording)
+            if (!_isRecording)
             {
                 // Check if the user has selected a file path with the.wav extension
                 SaveFileDialog saveFileDialog = new SaveFileDialog();
@@ -1092,48 +1103,64 @@ namespace WindowsFormsApp1
                     }
 
                     // Configure the WaveFileWriter with the chosen file path and the current WaveFormat
-                    waveWriter = new WaveFileWriter(filePath, waveIn.WaveFormat);
-                    waveIn.DataAvailable += (sender2, e2) =>
+                    _waveWriter = new WaveFileWriter(filePath, _waveIn.WaveFormat);
+                    _waveIn.DataAvailable += (sender2, e2) =>
                     {
-                        waveWriter.Write(e2.Buffer, 0, e2.BytesRecorded);
-                        waveWriter.Flush();
+                        _waveWriter.Write(e2.Buffer, 0, e2.BytesRecorded);
+                        _waveWriter.Flush();
                     };
 
                     // Start recording audio
-                    waveIn.StartRecording();
-                    isRecording = true;
+                    _waveIn.StartRecording();
+                    _isRecording = true;
                     // record_btn.Text = "Stop Recording";
                 }
             }
             else
             {
                 // Stop recording audio
-                waveIn.StopRecording();
-                waveIn.Dispose();
-                waveWriter.Dispose();
-                isRecording = false;
+                _waveIn.StopRecording();
+                _waveIn.Dispose();
+                _waveWriter.Dispose();
+                _isRecording = false;
                 // record_btn.Text = "Start Recording";
             }
             
         }
         private void InitializeVoiceRecorder()
         {
-            waveIn = new WaveInEvent();
-            waveIn.WaveFormat = new WaveFormat(44100, 1); // Sample rate and channels
+            _waveIn = new WaveInEvent();
+            _waveIn.WaveFormat = new WaveFormat(44100, 1); // Sample rate and channels
         }
 
         private void share_btn_Click(object sender, EventArgs e)
         {
-            // Save the image to a temporary file
-            string tempFilePath = Path.GetTempFileName();
-            pictureBox2.Image.Save(tempFilePath, ImageFormat.Jpeg); // Use the appropriate format
+            string uniqueFileName = $"Image_{DateTime.Now:yyyyMMddHHmmss}.jpeg";
+            pictureBox2.Image.Save(uniqueFileName, ImageFormat.Jpeg);
+            Console.WriteLine(uniqueFileName);
+            try
+            {
+                uploadFilesToGoogleDrive(_drive, _folderId, uniqueFileName);
+                Console.WriteLine(@"Upload successful.");
+                File.Delete(uniqueFileName);
+                Console.WriteLine($@"{uniqueFileName} deleted successfully.");
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine($@"An error occurred during upload: {ex.Message}");
+                try
+                {
+                    File.Delete(uniqueFileName);
+                    Console.WriteLine($@"{uniqueFileName} deleted after failed upload attempt.");
+                }
+                catch (IOException ioEx)
+                {
+                    Console.WriteLine($@"Failed to delete {uniqueFileName}: {ioEx.Message}");
+                }
+            }
 
-            // Create the Telegram URI
-            string message = "Check this out!"; // Your message here
-            string phoneNumber = "+963 962 190 786"; // Recipient's phone number here
-            string telegramUri = $"tg://msg?text={phoneNumber}";
-
-            // Start the process to open the Telegram app
+            string message = "Check this out!";
+            string telegramUri = $"https://t.me/share/url?url={_link}&text={message}";
             Process.Start(telegramUri);
         }
         private byte[] ImageToByteArray(Image image)
@@ -1175,5 +1202,77 @@ namespace WindowsFormsApp1
             Form3 f3 = new Form3();
             f3.ShowDialog();
         }
+
+        
+        private void button4_Click(object sender, EventArgs e)
+        {
+        }
+        
+        private void uploadFilesToGoogleDrive(string drive, string folderId, string filesToUpload)
+            {
+                try
+                {
+                    if (filesToUpload == null) 
+                    {
+                        Console.WriteLine(@"filesToUpload is null");
+                        throw new ArgumentNullException(nameof(filesToUpload));
+                    }
+
+                    GoogleCredential googleCredential;
+                    using (var stream = new FileStream(drive, FileMode.Open, FileAccess.Read))
+                    {
+                        googleCredential = GoogleCredential.FromStream(stream).CreateScoped(new [] { DriveService.ScopeConstants.Drive });
+                        var service = new DriveService(new BaseClientService.Initializer()
+                        {
+                            HttpClientInitializer = googleCredential,
+                            ApplicationName = "My First Project"
+                        });
+
+                        var file = filesToUpload;
+                        {
+                            var fileMetaData = new Google.Apis.Drive.v3.Data.File()
+                            {
+                                Name = Path.GetFileName(file),
+                                Parents = new List<string> { folderId } 
+                            };
+
+                            FilesResource.CreateMediaUpload request;
+                            using (var stream1 = new FileStream(file, FileMode.Open))
+                            {
+                                request = service.Files.Create(fileMetaData, stream1, getMimeType());
+                                request.Fields = "id, webViewLink"; 
+                                var progress = request.Upload(); 
+
+                                if (progress.Exception != null)
+                                {
+                                    Console.WriteLine($@"Upload failed: {progress.Exception.Message}");
+                                }
+
+                                var uploadedFile = request.ResponseBody;
+                                if (uploadedFile == null)
+                                {
+                                    Console.WriteLine(@"Uploaded file is null.");
+                                }
+
+                                Console.WriteLine($@"File '{fileMetaData.Name}' uploaded with id: {uploadedFile?.Id}");
+                                Console.WriteLine($@"Web View Link: {uploadedFile?.WebViewLink}");
+                                if (uploadedFile != null) _link = uploadedFile.WebViewLink;
+                            }
+                        }
+                    }
+                }
+                catch (Exception ex)
+                {
+                    Console.WriteLine(@"An error occurred: " + ex.Message);
+                    MessageBox.Show(@"An error occurred: " + ex.Message);
+                }
+}
+
+        private string getMimeType()
+{
+    return "application/octet-stream";
+}
+        
+        
     }
 }

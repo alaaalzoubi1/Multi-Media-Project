@@ -86,6 +86,7 @@ namespace WindowsFormsApp1
             this.text_btn = new System.Windows.Forms.Button();
             this.button2 = new System.Windows.Forms.Button();
             this.btn_tri = new System.Windows.Forms.Button();
+            this.button4 = new System.Windows.Forms.Button();
             this.menuStrip1.SuspendLayout();
             this.tableLayoutPanel1.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.pictureBox2)).BeginInit();
@@ -402,6 +403,7 @@ namespace WindowsFormsApp1
             // panel1
             // 
             this.panel1.BackColor = System.Drawing.Color.SteelBlue;
+            this.panel1.Controls.Add(this.button4);
             this.panel1.Controls.Add(this.report);
             this.panel1.Controls.Add(this.button3);
             this.panel1.Controls.Add(this.share_btn);
@@ -693,6 +695,24 @@ namespace WindowsFormsApp1
             this.btn_tri.UseVisualStyleBackColor = true;
             this.btn_tri.Click += new System.EventHandler(this.btn_tri_Click);
             // 
+            // button4
+            // 
+            this.button4.BackColor = System.Drawing.Color.SteelBlue;
+            this.button4.FlatAppearance.BorderColor = System.Drawing.Color.SteelBlue;
+            this.button4.FlatAppearance.BorderSize = 0;
+            this.button4.FlatAppearance.MouseDownBackColor = System.Drawing.Color.Teal;
+            this.button4.FlatAppearance.MouseOverBackColor = System.Drawing.Color.PowderBlue;
+            this.button4.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
+            this.button4.ForeColor = System.Drawing.Color.Black;
+            this.button4.Image = ((System.Drawing.Image)(resources.GetObject("button4.Image")));
+            this.button4.Location = new System.Drawing.Point(416, 6);
+            this.button4.Name = "button4";
+            this.button4.Size = new System.Drawing.Size(50, 51);
+            this.button4.TabIndex = 13;
+            this.button4.TextAlign = System.Drawing.ContentAlignment.BottomCenter;
+            this.button4.UseVisualStyleBackColor = false;
+            this.button4.Click += new System.EventHandler(this.button4_Click);
+            // 
             // Form1
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(8F, 16F);
@@ -730,6 +750,8 @@ namespace WindowsFormsApp1
             this.ResumeLayout(false);
             this.PerformLayout();
         }
+
+        private System.Windows.Forms.Button button4;
 
         private System.Windows.Forms.Button report;
 
