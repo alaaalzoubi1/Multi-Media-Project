@@ -1,25 +1,13 @@
 ﻿using System;
 using System.Windows.Forms;
-using System;
-using System.Collections.Generic;
 using System.Drawing;
-using System.Drawing.Drawing2D;
-using System.Drawing.Imaging;
-using System.IO;
-using System.Linq;
-using System.Runtime.InteropServices;
-using System.Text;
-using System.Windows.Forms;
-using AForge.Imaging.Filters;
-using System.Diagnostics;
-using AForge.Math;
 
 namespace WindowsFormsApp1
 {
     public partial class Form2 : Form
     {
-        private bool crop = false;
-        private String selectedPart = "skull";
+        
+        private string _selectedPart = "skull";
         public Form2()
         {
             
@@ -90,22 +78,22 @@ namespace WindowsFormsApp1
             Console.WriteLine(blackPixelsImg2);
             if (result  <=  50) // tolerance value
             {
-                MessageBox.Show("There is no advance in treatment");
+                MessageBox.Show(@"There is no advance in treatment");
             }
             else if (blackPixelsImg1 < blackPixelsImg2)
             {
-                MessageBox.Show("There is advancement in sickness (more sick)");
+                MessageBox.Show(@"There is advancement in sickness (more sick)");
             }
             else
             {
-                MessageBox.Show("There is advancement in treatment");
+                MessageBox.Show(@"There is advancement in treatment");
             }
         }
 
         
         private void button2_Click(object sender, EventArgs e)
         {
-            EvaluateBodyPart(selectedPart);
+            EvaluateBodyPart(_selectedPart);
             
         }
 
@@ -129,7 +117,7 @@ namespace WindowsFormsApp1
                     EvaluateLimbs();
                     break;
                 default:
-                    Console.WriteLine("Invalid body part selection.");
+                    Console.WriteLine(@"Invalid body part selection.");
                     break;
             }
         }
@@ -146,9 +134,6 @@ namespace WindowsFormsApp1
 
         public void EvaluateLungs(Bitmap image)
         {
-            int SOME_THRESHOLD_VALUE = 1000;
-            int ANOTHER_THRESHOLD_VALUE = 500;
-            // Split the image into two halves
             Rectangle rect1 = new Rectangle(0, 0, image.Width / 2, image.Height);
             Rectangle rect2 = new Rectangle(image.Width / 2, 0, image.Width - image.Width / 2, image.Height);
 
@@ -178,15 +163,12 @@ namespace WindowsFormsApp1
 
             bool IsDarkerThan(Color pixelColor, Color darknessThreshold)
             {
-                // Convert colors to grayscale for comparison
-                int pixelBrightness = (int)((pixelColor.R * 299 + pixelColor.G * 587 + pixelColor.B * 114) / 1000);
-                int thresholdBrightness = (int)((darknessThreshold.R * 299 + darknessThreshold.G * 587 + darknessThreshold.B * 114) / 1000);
+                int pixelBrightness = (pixelColor.R * 299 + pixelColor.G * 587 + pixelColor.B * 114) / 1000;
+                int thresholdBrightness = (darknessThreshold.R * 299 + darknessThreshold.G * 587 + darknessThreshold.B * 114) / 1000;
 
-                // Return true if the pixel is darker than the threshold
                 return pixelBrightness < thresholdBrightness;
             }
 
-            // Count dark pixels in each half
             int leftDarkPixelCount = CountDarkPixels(leftHalf,Color.FromArgb(128,128,128));
             int rightDarkPixelCount = CountDarkPixels(rightHalf,Color.FromArgb(128,128,128));
             // Determine the difference
@@ -198,11 +180,11 @@ namespace WindowsFormsApp1
             {
                 severity = "Severe Sickness";
             }
-            else if (difference <= 1300 && difference > 700)
+            else if (difference > 700)
             {
                 severity = "Moderate Sickness";
             }
-            else if(difference<= 700 && difference > 500)
+            else if(difference > 500)
             {
                 severity = "Mild Sickness";
             }
@@ -211,60 +193,60 @@ namespace WindowsFormsApp1
                 severity = "Healthy";
             }
 
-            MessageBox.Show($"Evaluating lungs... Severity: {severity}");
+            MessageBox.Show($@"Evaluating lungs... Severity: {severity}");
         }
 
 
         private void EvaluateTeeth()
         {
             // Logic for evaluating teeth goes here
-            Console.WriteLine("Evaluating teeth...");
+            Console.WriteLine(@"Evaluating teeth...");
         }
 
         private void EvaluateLimbs()
         {
             // Logic for evaluating limbs goes here
-            Console.WriteLine("Evaluating limbs...");
+            Console.WriteLine(@"Evaluating limbs...");
         }
 
         
 
         private void skullToolStripMenuItem_Click(object sender, EventArgs e)
         {
-            selectedPart = "skull";
-            toolStripComboBox1.Text = selectedPart;
+            _selectedPart = "skull";
+            toolStripComboBox1.Text = _selectedPart;
 
         }
 
         private void lungsToolStripMenuItem_Click(object sender, EventArgs e)
         {
-            selectedPart = "lungs";
-            toolStripComboBox1.Text = selectedPart;
+            _selectedPart = "lungs";
+            toolStripComboBox1.Text = _selectedPart;
 
 
         }
 
         private void teethToolStripMenuItem_Click(object sender, EventArgs e)
         {
-            selectedPart = "teeth";
-            toolStripComboBox1.Text = selectedPart;
+            _selectedPart = "teeth";
+            toolStripComboBox1.Text = _selectedPart;
 
 
         }
 
         private void limpsToolStripMenuItem_Click(object sender, EventArgs e)
         {
-            selectedPart = "limps";
-            toolStripComboBox1.Text = selectedPart;
+            _selectedPart = "limps";
+            toolStripComboBox1.Text = _selectedPart;
 
 
         }
 
-        private Point startPoint;
-        private Rectangle cropRect;
+        private Point _startPoint;
+        private Rectangle _cropRect;
         private void pictureBox1_MouseDown(object sender, MouseEventArgs e)
         {
-            startPoint = e.Location;
+            _startPoint = e.Location;
             pictureBox1.Invalidate();        }
 
         private void pictureBox1_MouseMove(object sender, MouseEventArgs e)
@@ -272,11 +254,11 @@ namespace WindowsFormsApp1
             if (e.Button!= MouseButtons.Left) return;
 
             // Calculate the width and height of the rectangle
-            int width = e.X - startPoint.X;
-            int height = e.Y - startPoint.Y;
+            int width = e.X - _startPoint.X;
+            int height = e.Y - _startPoint.Y;
 
             // Update the rectangle to cover the area from the start point to the current mouse position
-            cropRect = new Rectangle(startPoint, new Size(width, height));
+            _cropRect = new Rectangle(_startPoint, new Size(width, height));
 
             // Redraw the PictureBox to update the cropping rectangle
             pictureBox1.Invalidate();        }
@@ -303,18 +285,7 @@ namespace WindowsFormsApp1
 
         private void button3_Click(object sender, EventArgs e)
         {
-            CropImage(cropRect);
-        }
-
-        private void button4_Click(object sender, EventArgs e)
-        {
-                if (openFileDialog1.ShowDialog() == DialogResult.OK)
-                    {
-                        pictureBox1.SizeMode = PictureBoxSizeMode.Normal;
-                        Image originalImage = Image.FromFile(openFileDialog1.FileName);
-                        pictureBox1.Image = originalImage;
-                    }
-                    
+            CropImage(_cropRect);
         }
 
         private void pictureBox1_Paint(object sender, PaintEventArgs e)
@@ -322,7 +293,7 @@ namespace WindowsFormsApp1
 
             using (Pen selectPen = new Pen(Color.Aqua, 4))
             {
-                e.Graphics.DrawRectangle(selectPen, cropRect);
+                e.Graphics.DrawRectangle(selectPen, _cropRect);
             
             }        
         }

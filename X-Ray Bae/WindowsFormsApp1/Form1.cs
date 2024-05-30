@@ -27,7 +27,7 @@ namespace WindowsFormsApp1
     {
         private WaveInEvent _waveIn;
         private WaveFileWriter _waveWriter;
-        private bool _isRecording = false;
+        private bool _isRecording;
         private bool _isPainting;
         private Color _paintColor = Color.Black;
         private  int _paintBrushSize = 1;
@@ -40,16 +40,14 @@ namespace WindowsFormsApp1
         private readonly string _folderId = "1JcdTBYUOW8BtJRYUnazl6ITfe8hrMRaT";
         private string _link;
 
-        private Bitmap bm ;
-        private Bitmap originalimage;
-        private Bitmap copyimage;
-        private Graphics g ;
-        private Point px, py;
-        private Pen p = new Pen(Color.Black,1  );
-        private Pen eraser = new Pen(Color.Transparent, 10);
-        private int index;
-        private int x, y, sX, sY, cX, cY;
-        private Point textLocation;
+        private Bitmap _bm ;
+        private Graphics _g ;
+        private Point _px, _py;
+        private readonly Pen _p = new Pen(Color.Black,1  );
+        private readonly Pen _eraser = new Pen(Color.Transparent, 10);
+        private int _index;
+        private int _x, _y, _sX, _sY, _cX, _cY;
+        private Point _textLocation;
         
         public Form1()
         {
@@ -81,7 +79,7 @@ namespace WindowsFormsApp1
             {
                 pictureBox1.SizeMode = PictureBoxSizeMode.Normal;
                 Image originalImage = Image.FromFile(openFileDialog1.FileName);
-                pictureBox1.Image = resizeImage(originalImage, pictureBox1.Size);
+                pictureBox1.Image = ResizeImage(originalImage, pictureBox1.Size);
             }
         }
 
@@ -94,7 +92,7 @@ namespace WindowsFormsApp1
             pictureBox2.SizeMode = PictureBoxSizeMode.Normal;
             Sepia sepia = new Sepia();
             Bitmap image1 = sepia.Apply((Bitmap)pictureBox1.Image);
-            colorizeSelectedArea1(image1, _rect);
+            ColorizeSelectedArea1(image1, _rect);
             pictureBox2.Image = image1;
         }
 
@@ -105,7 +103,7 @@ namespace WindowsFormsApp1
                 pictureBox2.SizeMode = PictureBoxSizeMode.Normal;
                 string filePath = _files[0];
                 Image image = Image.FromFile(filePath);
-                pictureBox2.Image = resizeImage(image, pictureBox2.Size);
+                pictureBox2.Image = ResizeImage(image, pictureBox2.Size);
             }
             else
             {
@@ -121,7 +119,7 @@ namespace WindowsFormsApp1
             pictureBox2.SizeMode = PictureBoxSizeMode.Normal;
             HueModifier hueModifier = new HueModifier(200);
             Bitmap image1 = hueModifier.Apply((Bitmap)pictureBox1.Image);
-            colorizeSelectedArea1(image1, _rect);
+            ColorizeSelectedArea1(image1, _rect);
             pictureBox2.Image = image1;
         }
 
@@ -130,7 +128,7 @@ namespace WindowsFormsApp1
             pictureBox2.SizeMode = PictureBoxSizeMode.Normal;
             RotateChannels rotateChannels = new RotateChannels();
             Bitmap image1 = rotateChannels.Apply((Bitmap)pictureBox1.Image);
-            colorizeSelectedArea1(image1, _rect);
+            ColorizeSelectedArea1(image1, _rect);
             pictureBox2.Image = image1;
         }
 
@@ -139,7 +137,7 @@ namespace WindowsFormsApp1
             pictureBox2.SizeMode = PictureBoxSizeMode.Normal;
             Invert invert = new Invert();
             Bitmap image1 = invert.Apply((Bitmap)pictureBox1.Image);
-            colorizeSelectedArea1(image1, _rect);
+            ColorizeSelectedArea1(image1, _rect);
             pictureBox2.Image = image1;
         }
 
@@ -251,7 +249,7 @@ namespace WindowsFormsApp1
         private void paintToolStripMenuItem_Click(object sender, EventArgs e)
         {
             _isSelect = false;
-            index = 1;
+            _index = 1;
         }
 
         private void pictureBox1_MouseUp(object sender, MouseEventArgs e)
@@ -309,7 +307,7 @@ namespace WindowsFormsApp1
                         case "Star":
                             using (Brush brush = new SolidBrush(_paintColor))
                             {
-                                PointF[] starPoints = createStarPoints(5, new PointF(location.X, location.Y),
+                                PointF[] starPoints = CreateStarPoints(5, new PointF(location.X, location.Y),
                                     _paintBrushSize * 2, _paintBrushSize);
                                 g.FillPolygon(brush, starPoints);
                             }
@@ -322,7 +320,7 @@ namespace WindowsFormsApp1
             pictureBox2.Invalidate();
         }
 
-        private PointF[] createStarPoints(int numPoints, PointF center, float outerRadius, float innerRadius)
+        private static PointF[] CreateStarPoints(int numPoints, PointF center, float outerRadius, float innerRadius)
         {
             List<PointF> points = new List<PointF>();
             double angle = Math.PI / numPoints;
@@ -350,7 +348,7 @@ namespace WindowsFormsApp1
             _brushType = toolStripComboBox3.SelectedItem.ToString();
         }
 
-        private void colorizeSelectedArea1(Bitmap originalImage, Rectangle selectionArea)
+        private void ColorizeSelectedArea1(Bitmap originalImage, Rectangle selectionArea)
         {
             selectionArea.Intersect(new Rectangle(0, 0, originalImage.Width, originalImage.Height));
 
@@ -373,7 +371,7 @@ namespace WindowsFormsApp1
                     int xIndex = currentLine + x * bytesPerPixel;
 
                     byte originalBrightness = pixels[xIndex];
-                    applyHeatMapColorTransformation(originalBrightness, out byte r, out byte g, out byte b);
+                    ApplyHeatMapColorTransformation(originalBrightness, out byte r, out byte g, out byte b);
 
                     pixels[xIndex] = b;
                     pixels[xIndex + 1] = g;
@@ -392,12 +390,12 @@ namespace WindowsFormsApp1
 
             Bitmap xrayImage = (Bitmap)pictureBox1.Image;
 
-            colorizeSelectedArea1(xrayImage, _rect);
+            ColorizeSelectedArea1(xrayImage, _rect);
 
             pictureBox2.Image = xrayImage;
         }
 
-        private static Image resizeImage(Image image, Size size,
+        private static Image ResizeImage(Image image, Size size,
             bool preserveAspectRatio = true)
         {
             int newWidth;
@@ -428,7 +426,7 @@ namespace WindowsFormsApp1
             return newImage;
         }
 
-        private void applyHeatMapColorTransformation(byte brightness, out byte r, out byte g, out byte b)
+        private static void ApplyHeatMapColorTransformation(byte brightness, out byte r, out byte g, out byte b)
         {
             if (brightness < 85)
             {
@@ -457,7 +455,7 @@ namespace WindowsFormsApp1
             {
                 pictureBox1.SizeMode = PictureBoxSizeMode.Normal;
                 Image originalImage = Image.FromFile(openFileDialog1.FileName);
-                pictureBox1.Image = resizeImage(originalImage, pictureBox1.Size);
+                pictureBox1.Image = ResizeImage(originalImage, pictureBox1.Size);
             }
 
         }
@@ -470,7 +468,7 @@ namespace WindowsFormsApp1
                 pictureBox1.SizeMode = PictureBoxSizeMode.Normal;
                 string filePath = _files[0];
                 Image image = Image.FromFile(filePath);
-                pictureBox1.Image = resizeImage(image, pictureBox1.Size);
+                pictureBox1.Image = ResizeImage(image, pictureBox1.Size);
             }
         }
 
@@ -491,7 +489,7 @@ namespace WindowsFormsApp1
             // pictureBox2.Image = image1;
         }
 
-        private bool isImage(FileInfo file)
+        private static bool IsImage(FileInfo file)
         {
             string[] extensions = { ".jpg", ".jpeg", ".png", ".gif", ".bmp", ".tiff", ".ico" };
             return extensions.Contains(file.Extension.ToLower());
@@ -512,7 +510,7 @@ namespace WindowsFormsApp1
 
 
                     var files = new DirectoryInfo(folderPath).GetFiles("*.*", SearchOption.AllDirectories)
-                        .Where(file => isImage(file) && file.LastWriteTime.Date == date)
+                        .Where(file => IsImage(file) && file.LastWriteTime.Date == date)
                         .ToArray();
 
 
@@ -525,12 +523,12 @@ namespace WindowsFormsApp1
 
                     if (files.Length == 0)
                     {
-                        MessageBox.Show("No matches found.", "Information", MessageBoxButtons.OK,
+                        MessageBox.Show(@"No matches found.", @"Information", MessageBoxButtons.OK,
                             MessageBoxIcon.Information);
                     }
                     else
                     {
-                        MessageBox.Show(sb.ToString(), "Filtered Files", MessageBoxButtons.OK,
+                        MessageBox.Show(sb.ToString(), @"Filtered Files", MessageBoxButtons.OK,
                             MessageBoxIcon.Information);
                     }
                 }
@@ -549,7 +547,7 @@ namespace WindowsFormsApp1
                         double sizeB = double.Parse(toolStripTextBox1.Text);
 
                         var files = new DirectoryInfo(folderPath).GetFiles("*.*", SearchOption.AllDirectories)
-                            .Where(file => isImage(file) && file.Length == sizeB)
+                            .Where(file => IsImage(file) && Math.Abs(file.Length - sizeB * 1024) < 1024)
                             .ToArray();
                         StringBuilder sb = new StringBuilder();
                         foreach (FileInfo file in files)
@@ -559,12 +557,12 @@ namespace WindowsFormsApp1
 
                         if (files.Length == 0)
                         {
-                            MessageBox.Show("No matches found.", "Information", MessageBoxButtons.OK,
+                            MessageBox.Show(@"No matches found.", @"Information", MessageBoxButtons.OK,
                                 MessageBoxIcon.Information);
                         }
                         else
                         {
-                            MessageBox.Show(sb.ToString(), "Filtered Files", MessageBoxButtons.OK,
+                            MessageBox.Show(sb.ToString(), @"Filtered Files", MessageBoxButtons.OK,
                                 MessageBoxIcon.Information);
                         }
                     }
@@ -581,17 +579,13 @@ namespace WindowsFormsApp1
         }
 
 
-
-
-        public void applyLowPassFilter(Bitmap inputImage)
+        private void ApplyLowPassFilter(Bitmap inputImage)
         {
-            // Convert the input image to grayscale
             Grayscale filter = new Grayscale(0.2125, 0.7154, 0.0721);
             Bitmap grayscaleImage = filter.Apply(inputImage);
 
-            // Resize the image to dimensions that are powers of 2
-            int width = nextPowerOfTwo(grayscaleImage.Width);
-            int height = nextPowerOfTwo(grayscaleImage.Height);
+            int width = NextPowerOfTwo(grayscaleImage.Width);
+            int height = NextPowerOfTwo(grayscaleImage.Height);
             ResizeBilinear resizeFilter = new ResizeBilinear(width, height);
             Bitmap resizedImage = resizeFilter.Apply(grayscaleImage);
 
@@ -630,16 +624,13 @@ namespace WindowsFormsApp1
         }
 
 
-
-        public void applyHighPassFilter(Bitmap inputImage)
+        private void ApplyHighPassFilter(Bitmap inputImage)
         {
-            // Convert the input image to grayscale
             Grayscale grayscaleFilter = new Grayscale(0.2125, 0.7154, 0.0721);
             Bitmap grayscaleImage = grayscaleFilter.Apply(inputImage);
 
-            // Resize the image to dimensions that are powers of 2
-            int width = nextPowerOfTwo(grayscaleImage.Width);
-            int height = nextPowerOfTwo(grayscaleImage.Height);
+            int width = NextPowerOfTwo(grayscaleImage.Width);
+            int height = NextPowerOfTwo(grayscaleImage.Height);
             ResizeBilinear resizeFilter = new ResizeBilinear(width, height);
             Bitmap resizedImage = resizeFilter.Apply(grayscaleImage);
 
@@ -684,27 +675,17 @@ namespace WindowsFormsApp1
 
         private void lBFToolStripMenuItem_Click(object sender, EventArgs e)
         {
-            applyLowPassFilter((Bitmap)pictureBox1.Image);
+            ApplyLowPassFilter((Bitmap)pictureBox1.Image);
         }
 
         private void hBFToolStripMenuItem_Click(object sender, EventArgs e)
         {
-            applyHighPassFilter((Bitmap)pictureBox1.Image);
+            ApplyHighPassFilter((Bitmap)pictureBox1.Image);
         }
 
-        private Bitmap resizeImageToPowerOfTwo(Bitmap inputImage)
+        private static int NextPowerOfTwo(int n)
         {
-            int nextWidth = nextPowerOfTwo(inputImage.Width);
-            int nextHeight = nextPowerOfTwo(inputImage.Height);
-
-            ResizeBilinear resizer = new ResizeBilinear(nextWidth, nextHeight);
-            return resizer.Apply(inputImage);
-        }
-
-// Helper function to find the next power of 2
-        private int nextPowerOfTwo(int n)
-        {
-            int p = 1;
+            var p = 1;
             while (p < n) p <<= 1;
             return p;
         }
@@ -715,13 +696,13 @@ namespace WindowsFormsApp1
             {
                 _paintColor = _colorDialog.Color;
                 color_pic.BackColor = _colorDialog.Color;
-                p.Color = _paintColor;
+                _p.Color = _paintColor;
             }
         }
 
         private void btn_fill_Click(object sender, EventArgs e)
         {
-            index = 7;
+            _index = 7;
             
         }
 
@@ -729,66 +710,64 @@ namespace WindowsFormsApp1
 
         private void btn_eraser_Click(object sender, EventArgs e)
         {
-            g = Graphics.FromImage(pictureBox2.Image);
-            index = 3;
+            _g = Graphics.FromImage(pictureBox2.Image);
+            _index = 3;
             _isSelect = false;
             if (pictureBox2.Image != null)
             {
-                originalimage = (Bitmap)pictureBox2.Image;
-                copyimage = (Bitmap)pictureBox1.Image;
             }
         }
 
         private void btn_pencil_Click(object sender, EventArgs e)
         {
-            g = Graphics.FromImage(pictureBox2.Image);
-            index = 2;
+            _g = Graphics.FromImage(pictureBox2.Image);
+            _index = 2;
             _isSelect = false;
         }
 
         private void btn_rect_Click(object sender, EventArgs e)
         {
-            g = Graphics.FromImage(pictureBox2.Image);
-            index = 5;
+            _g = Graphics.FromImage(pictureBox2.Image);
+            _index = 5;
             _isSelect = false;
             
         }
 
         private void btn_line_Click(object sender, EventArgs e)
         { 
-            g = Graphics.FromImage(pictureBox2.Image);
+            _g = Graphics.FromImage(pictureBox2.Image);
 
-            index = 6;
+            _index = 6;
             _isSelect = false;
-            Console.WriteLine(bm);
+            Console.WriteLine(_bm);
         }
         private void btn_tri_Click(object sender, EventArgs e)
         {
-            g = Graphics.FromImage(pictureBox2.Image);
-            index = 8;
+            _g = Graphics.FromImage(pictureBox2.Image);
+            _index = 8;
             _isSelect = false;        }
 
         private void pictureBox2_MouseDown(object sender, MouseEventArgs e)
         {
-            p.Width = _paintBrushSize;
-            eraser.Width = _paintBrushSize;
+            _p.Width = _paintBrushSize;
+            _eraser.Width = _paintBrushSize;
             _isPainting = true;
-            if (index == 1)
+            if (_index == 1)
             {
                 PaintOnPictureBox(e.Location);
             }
-            else if (index == 2)
+            else if (_index == 2)
             {
-                py = e.Location;
+                _py = e.Location;
             }
-            else if (index == 3)
+            else if (_index == 3)
             {
-                py = e.Location;
+                _py = e.Location;
             }
           
             
-                cX = e.X;
-                cY = e.Y;
+                _cX = e.X;
+                _cY = e.Y;
             
             pictureBox2.Invalidate();
         }
@@ -798,32 +777,26 @@ namespace WindowsFormsApp1
         {
             if (_isPainting)
             {
-                if (index == 1)
+                if (_index == 1)
                 {
                     PaintOnPictureBox(e.Location);
                 }
-                else if (index == 2)
+                else if (_index == 2)
                 {
               
                     
-                        px = e.Location;
-                        g.DrawLine(p, px, py);
-                        py = px;
+                        _px = e.Location;
+                        _g.DrawLine(_p, _px, _py);
+                        _py = _px;
                         
                         
                 }
-                else if (index == 3)
+                else if (_index == 3)
                 {
-                    px = e.Location;
-                    // g.DrawLine(eraser,px,py);
-                    // originalimage = (Bitmap)pictureBox2.Image;
-                    // copyimage = (Bitmap)pictureBox1.Image;
-                    // originalimage.SetPixel(px.X,px.Y,copyimage.GetPixel(px.X,px.Y));
-                    // py = px;
-                    // pictureBox2.Image = originalimage; 
-                    g.CompositingMode = System.Drawing.Drawing2D.CompositingMode.SourceCopy;
-                    g.DrawLine(eraser, px, py);
-                    py = px;
+                    _px = e.Location;
+                    _g.CompositingMode = CompositingMode.SourceCopy;
+                    _g.DrawLine(_eraser, _px, _py);
+                    _py = _px;
 
 
 
@@ -831,10 +804,10 @@ namespace WindowsFormsApp1
                 }
                
 
-                x = e.X;
-                y = e.Y;
-                sX = e.X - cX;
-                sY = e.Y - cY;
+                _x = e.X;
+                _y = e.Y;
+                _sX = e.X - _cX;
+                _sY = e.Y - _cY;
             }
             pictureBox2.Invalidate();
         }
@@ -843,53 +816,53 @@ namespace WindowsFormsApp1
         private void pictureBox2_MouseUp(object sender, MouseEventArgs e)
         {
             _isPainting = false;
-            sX = x - cX;
-            sY = y - cY;
-            if (index == 4)     
+            _sX = _x - _cX;
+            _sY = _y - _cY;
+            if (_index == 4)     
             {
-                g.DrawEllipse(p,cX,cY,sX,sY);
+                _g.DrawEllipse(_p,_cX,_cY,_sX,_sY);
             }
 
-            if (index == 5)
+            if (_index == 5)
             { 
-                g.DrawRectangle(p,cX,cY,sX,sY);
+                _g.DrawRectangle(_p,_cX,_cY,_sX,_sY);
             }
 
-            if (index == 6 )
+            if (_index == 6 )
             {
-                g.DrawLine(p,cX,cY,x,y);
+                _g.DrawLine(_p,_cX,_cY,_x,_y);
             }
 
-            if (index == 8)
+            if (_index == 8)
             {
                 // Define the three points of the triangle
-                Point point1 = new Point(cX, cY); // This will be the first vertex
-                Point point2 = new Point(cX + sX, cY); // Second vertex
-                Point point3 = new Point(cX, cY + sY); // Third vertex
+                Point point1 = new Point(_cX, _cY); // This will be the first vertex
+                Point point2 = new Point(_cX + _sX, _cY); // Second vertex
+                Point point3 = new Point(_cX, _cY + _sY); // Third vertex
 
                 // Create an array of points
                 Point[] trianglePoints = { point1, point2, point3 };
 
                 // Draw the triangle
-                g.DrawPolygon(p, trianglePoints);
+                _g.DrawPolygon(_p, trianglePoints);
             }
 
-            if (index == 9)
+            if (_index == 9)
             {
                 // Define points that the curve will pass through
                 Point[] curvePoints = {
-                    new Point(cX, cY),
-                    new Point(cX + sX / 2, cY - sY), // Control point for the curve
-                    new Point(cX + sX, cY)
+                    new Point(_cX, _cY),
+                    new Point(_cX + _sX / 2, _cY - _sY), // Control point for the curve
+                    new Point(_cX + _sX, _cY)
                 };
 
                 // Draw the curve
-                g.DrawCurve(p, curvePoints);
+                _g.DrawCurve(_p, curvePoints);
             }
-            if (index == 10)
+            if (_index == 10)
             {
        
-                textLocation = new Point(e.X, e.Y);
+                _textLocation = new Point(e.X, e.Y);
                 textBox1.Visible = true;
                 textBox1.Focus();
             }
@@ -903,8 +876,8 @@ namespace WindowsFormsApp1
 
         private void btn_ellipse_Click_1(object sender, EventArgs e)
         {
-            g = Graphics.FromImage(pictureBox2.Image);
-            index = 4;
+            _g = Graphics.FromImage(pictureBox2.Image);
+            _index = 4;
             _isSelect = false;
         }
 
@@ -915,67 +888,66 @@ namespace WindowsFormsApp1
 
 
                 Graphics g = e.Graphics;
-                if (index == 4)
+                if (_index == 4)
                 {
-                    g.DrawEllipse(p, cX, cY, sX, sY);
+                    g.DrawEllipse(_p, _cX, _cY, _sX, _sY);
                 }
 
-                if (index == 5)
+                if (_index == 5)
                 {
-                    g.DrawRectangle(p, cX, cY, sX, sY);
+                    g.DrawRectangle(_p, _cX, _cY, _sX, _sY);
                 }
 
-                if (index == 6)
+                if (_index == 6)
                 {
-                    g.DrawLine(p, cX, cY, x, y);
+                    g.DrawLine(_p, _cX, _cY, _x, _y);
                 }
-                if (index == 8)
+                if (_index == 8)
                 {
                     // Define the three points of the triangle
-                    Point point1 = new Point(cX, cY); // This will be the first vertex
-                    Point point2 = new Point(cX + sX, cY); // Second vertex
-                    Point point3 = new Point(cX, cY + sY); // Third vertex
+                    Point point1 = new Point(_cX, _cY); // This will be the first vertex
+                    Point point2 = new Point(_cX + _sX, _cY); // Second vertex
+                    Point point3 = new Point(_cX, _cY + _sY); // Third vertex
                     
                     // Create an array of points
                     Point[] trianglePoints = { point1, point2, point3 };
                     
                     // Draw the triangle
-                    g.DrawPolygon(p, trianglePoints);
+                    g.DrawPolygon(_p, trianglePoints);
 
                 }
 
-                if (index == 9)
+                if (_index == 9)
                 {
                     // Define points that the curve will pass through
                     Point[] curvePoints = {
-                        new Point(cX, cY),
-                        new Point(cX + sX / 2, cY - sY), // Control point for the curve
-                        new Point(cX + sX, cY)
+                        new Point(_cX, _cY),
+                        new Point(_cX + _sX / 2, _cY - _sY), // Control point for the curve
+                        new Point(_cX + _sX, _cY)
                     };
 
                     // Draw the curve
-                    g.DrawCurve(p, curvePoints);
+                    g.DrawCurve(_p, curvePoints);
                 }
 
             }
         }
 
-        private void validate(Bitmap bm, Stack<Point> sp, int x, int y, Color oldColor, Color newColor)
+        private static void Validate(Bitmap bm, Stack<Point> sp, int x, int y, Color oldColor, Color newColor)
         {
-            Color cx = bm.GetPixel(x, y);
-            if (cx == oldColor)
-            {
-                sp.Push(new Point(x,y));
-                bm.SetPixel(x,y,newColor);
-            }
+            var cx = bm.GetPixel(x, y);
+            if (cx != oldColor) return;
+            sp.Push(new Point(x,y));
+            bm.SetPixel(x,y,newColor);
         }
-        public void fill(Bitmap bm, int x, int y, Color color)
+
+        private void Fill(Bitmap bm, int x, int y, Color color)
         {
-            Color old_color = bm.GetPixel(x, y);
+            Color oldColor = bm.GetPixel(x, y);
             Stack<Point> pixel = new Stack<Point>();
             pixel.Push(new Point(x,y));
             bm.SetPixel(x,y,color);
-            if (old_color == color) 
+            if (oldColor == color) 
             {
               
                 return;
@@ -984,13 +956,13 @@ namespace WindowsFormsApp1
             while (pixel.Count > 0)
             {
                 Console.WriteLine(pixel.Count);
-                Point pt = (Point)pixel.Pop();
+                Point pt = pixel.Pop();
                 if (pt.X > 0 && pt.Y > 0 && pt.X < bm.Width - 1 && pt.Y < bm.Height - 1)
                 {
-                    validate(bm,pixel,pt.X-1,pt.Y,old_color,color);
-                    validate(bm,pixel,pt.X,pt.Y,old_color,color);
-                    validate(bm,pixel,pt.X+1,pt.Y,old_color,color);
-                    validate(bm,pixel,pt.X,pt.Y+1,old_color,color);
+                    Validate(bm,pixel,pt.X-1,pt.Y,oldColor,color);
+                    Validate(bm,pixel,pt.X,pt.Y,oldColor,color);
+                    Validate(bm,pixel,pt.X+1,pt.Y,oldColor,color);
+                    Validate(bm,pixel,pt.X,pt.Y+1,oldColor,color);
 
 
                 }
@@ -1008,25 +980,25 @@ namespace WindowsFormsApp1
 
         private void pictureBox2_MouseClick(object sender, MouseEventArgs e)
         {
-            if (index == 7)
+            if (_index == 7)
             {
-                bm =(Bitmap) pictureBox2.Image;
+                _bm =(Bitmap) pictureBox2.Image;
                 Point point = set_point(pictureBox2, e.Location);
-                fill(bm,point.X,point.Y,_paintColor);
+                Fill(_bm,point.X,point.Y,_paintColor);
             }
         }
 
         private void button2_Click(object sender, EventArgs e)
         {
-            g = Graphics.FromImage(pictureBox2.Image);
-            index = 9;
+            _g = Graphics.FromImage(pictureBox2.Image);
+            _index = 9;
             _isSelect = false;
         }
 
         private void text_btn_Click(object sender, EventArgs e)
         {
-            g = Graphics.FromImage(pictureBox2.Image);
-            index = 10;
+            _g = Graphics.FromImage(pictureBox2.Image);
+            _index = 10;
             _isSelect = false;        
         }
 
@@ -1034,7 +1006,7 @@ namespace WindowsFormsApp1
         {
             if (textBox1.Text.Length == 15)
             {
-                Console.WriteLine(textLocation);
+                Console.WriteLine(_textLocation);
                 textBox1.Visible = false;
 
                 // Draw the text at the recorded location
@@ -1044,7 +1016,7 @@ namespace WindowsFormsApp1
                     {
                         using (Brush brush = new SolidBrush(Color.Black))
                         {
-                            g.DrawString(textBox1.Text, font, brush, textLocation);
+                            g.DrawString(textBox1.Text, font, brush, _textLocation);
                         }
                     }
                 }
@@ -1064,7 +1036,7 @@ namespace WindowsFormsApp1
         {
             if (e.KeyCode == Keys.Enter)
             {
-                Console.WriteLine(textLocation);
+                Console.WriteLine(_textLocation);
                 textBox1.Visible = false;
 
                 // Draw the text at the recorded location
@@ -1074,7 +1046,7 @@ namespace WindowsFormsApp1
                     {
                         using (Brush brush = new SolidBrush(_paintColor))
                         {
-                            g.DrawString(textBox1.Text, font, brush, textLocation);
+                            g.DrawString(textBox1.Text, font, brush, _textLocation);
                         }
                     }
                 }
@@ -1140,7 +1112,7 @@ namespace WindowsFormsApp1
             Console.WriteLine(uniqueFileName);
             try
             {
-                uploadFilesToGoogleDrive(_drive, _folderId, uniqueFileName);
+                UploadFilesToGoogleDrive(_drive, _folderId, uniqueFileName);
                 Console.WriteLine(@"Upload successful.");
                 File.Delete(uniqueFileName);
                 Console.WriteLine($@"{uniqueFileName} deleted successfully.");
@@ -1162,14 +1134,6 @@ namespace WindowsFormsApp1
             string message = "Check this out!";
             string telegramUri = $"https://t.me/share/url?url={_link}&text={message}";
             Process.Start(telegramUri);
-        }
-        private byte[] ImageToByteArray(Image image)
-        {
-            using (var ms = new MemoryStream())
-            {
-                image.Save(ms, System.Drawing.Imaging.ImageFormat.Png);
-                return ms.ToArray();
-            }
         }
 
         private void button3_Click(object sender, EventArgs e)
@@ -1204,15 +1168,16 @@ namespace WindowsFormsApp1
         }
 
         
-        private void button4_Click(object sender, EventArgs e)
+        private void button4_Click(object sender, EventArgs e)//compress
         {
+            
         }
         
-        private void uploadFilesToGoogleDrive(string drive, string folderId, string filesToUpload)
+        private void UploadFilesToGoogleDrive(string drive, string folderId, string filesToUpload)
             {
                 try
                 {
-                    if (filesToUpload == null) 
+                    if (filesToUpload == null)  
                     {
                         Console.WriteLine(@"filesToUpload is null");
                         throw new ArgumentNullException(nameof(filesToUpload));
@@ -1239,7 +1204,7 @@ namespace WindowsFormsApp1
                             FilesResource.CreateMediaUpload request;
                             using (var stream1 = new FileStream(file, FileMode.Open))
                             {
-                                request = service.Files.Create(fileMetaData, stream1, getMimeType());
+                                request = service.Files.Create(fileMetaData, stream1, GetMimeType());
                                 request.Fields = "id, webViewLink"; 
                                 var progress = request.Upload(); 
 
@@ -1266,12 +1231,12 @@ namespace WindowsFormsApp1
                     Console.WriteLine(@"An error occurred: " + ex.Message);
                     MessageBox.Show(@"An error occurred: " + ex.Message);
                 }
-}
+            }
 
-        private string getMimeType()
-{
-    return "application/octet-stream";
-}
+        private static string GetMimeType() 
+        { 
+            return "application/octet-stream";
+        }
         
         
     }
