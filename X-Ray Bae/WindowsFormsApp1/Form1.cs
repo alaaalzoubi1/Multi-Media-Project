@@ -1278,12 +1278,22 @@ namespace WindowsFormsApp1
                     
                     if (pictureBox2.Image!= null)
                     {
-                        // Construct the full path for the image in the new folder
-                        string imagePath = Path.Combine(fullPath, $"{folderName}.png");
-                        string wewe =CompressImage();
-                        // Save the image from PictureBox2 to the new folder
-                        pictureBox2.Image.Save(wewe, ImageFormat.Png); // Change ImageFormat.Png to your preferred format if necessary
-                        MessageBox.Show($"Image saved to {wewe}");
+                        // Assuming fullPath is already defined and points to the directory where you want to save the images
+                        string imagePath = Path.Combine(fullPath, $"{folderName}.jpg");
+
+                        // Call your CompressImage() function and store the result in wewe
+                        string wewe = CompressImage();
+
+                        // Use File.Copy to copy the compressed image from wewe to the new folder
+                        try
+                        {
+                            File.Copy(wewe, imagePath, true);
+                            MessageBox.Show($"Image copied to {imagePath}");
+                        }
+                        catch (IOException ex)
+                        {
+                            MessageBox.Show($"An error occurred while copying the image: {ex.Message}");
+                        }
                     }
                     else
                     {
