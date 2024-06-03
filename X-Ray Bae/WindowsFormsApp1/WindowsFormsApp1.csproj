@@ -157,8 +157,8 @@
           <HintPath>..\packages\Microsoft.Win32.Registry.4.7.0\lib\net461\Microsoft.Win32.Registry.dll</HintPath>
         </Reference>
         <Reference Include="mscorlib" />
-        <Reference Include="NAudio, Version=1.10.0.0, Culture=neutral, processorArchitecture=MSIL">
-          <HintPath>..\packages\NAudio.1.10.0\lib\net35\NAudio.dll</HintPath>
+        <Reference Include="NAudio, Version=1.7.3.0, Culture=neutral, processorArchitecture=MSIL">
+          <HintPath>..\packages\NAudio.1.7.3\lib\net35\NAudio.dll</HintPath>
         </Reference>
         <Reference Include="Newtonsoft.Json, Version=13.0.0.0, Culture=neutral, PublicKeyToken=30ad4fe6b2a6aeed, processorArchitecture=MSIL">
           <HintPath>..\packages\Newtonsoft.Json.13.0.3\lib\net45\Newtonsoft.Json.dll</HintPath>
@@ -342,10 +342,6 @@
             <AutoGen>True</AutoGen>
             <DependentUpon>Resources.resx</DependentUpon>
         </Compile>
-        <None Include="OpenCvSharp.Blob.dll.config" />
-        <None Include="OpenCvSharp.CPlusPlus.dll.config" />
-        <None Include="OpenCvSharp.dll.config" />
-        <None Include="OpenCvSharp.MachineLearning.dll.config" />
         <None Include="packages.config" />
         <None Include="pepe-removebg-preview.ico" />
         <None Include="Properties\Settings.settings">
@@ -362,8 +358,6 @@
         <None Include="App.config" />
     </ItemGroup>
     <ItemGroup>
-      <Content Include="libOpenCvSharpExtern.so" />
-      <Content Include="OpenCvSharpExtern.dll" />
       <Content Include="Resources\noun_drag_and_drop_49665.png" />
     </ItemGroup>
     <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />

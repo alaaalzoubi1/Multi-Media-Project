@@ -12,13 +12,16 @@ using System.Text;
 using System.Windows.Forms;
 using AForge.Imaging;
 using AForge.Imaging.Filters;
-
 using Google.Apis.Auth.OAuth2;
 using Google.Apis.Drive.v3;
 using Google.Apis.Services;
 using Bitmap = System.Drawing.Bitmap;
 using Image = System.Drawing.Image;
+
 using NAudio.Wave;
+
+
+
 
 
 namespace WindowsFormsApp1
@@ -35,7 +38,6 @@ namespace WindowsFormsApp1
         private bool _isSelect = true;
         private string _brushType = "Triangle";
         private string[] _files;
-        
         private readonly string _drive = "alaa.json";
         private readonly string _folderId = "1JcdTBYUOW8BtJRYUnazl6ITfe8hrMRaT";
         private string _link;
@@ -1059,23 +1061,26 @@ namespace WindowsFormsApp1
             }
         }
 
+        private string audiofilepath;
+        
         private void record_btn_Click(object sender, EventArgs e)
         {
             if (!_isRecording)
             {
                 // Check if the user has selected a file path with the.wav extension
                 SaveFileDialog saveFileDialog = new SaveFileDialog();
+                
                 if (saveFileDialog.ShowDialog() == DialogResult.OK)
                 {
-                    string filePath = saveFileDialog.FileName;
+                    audiofilepath = saveFileDialog.FileName;
                     // Ensure the file path ends with ".wav"
-                    if (!filePath.EndsWith(".wav"))
+                    if (!audiofilepath.EndsWith(".wav"))
                     {
-                        filePath += ".wav";
+                        audiofilepath += ".wav";
                     }
 
                     // Configure the WaveFileWriter with the chosen file path and the current WaveFormat
-                    _waveWriter = new WaveFileWriter(filePath, _waveIn.WaveFormat);
+                    _waveWriter = new NAudio.Wave.WaveFileWriter(audiofilepath, _waveIn.WaveFormat);
                     _waveIn.DataAvailable += (sender2, e2) =>
                     {
                         _waveWriter.Write(e2.Buffer, 0, e2.BytesRecorded);
@@ -1096,38 +1101,49 @@ namespace WindowsFormsApp1
                 _waveWriter.Dispose();
                 _isRecording = false;
                 // record_btn.Text = "Start Recording";
+                DialogResult result = MessageBox.Show("Do you want to compress the saved record?", "Compress PDF",
+                    MessageBoxButtons.YesNo, MessageBoxIcon.Question);
+
+                if (result == DialogResult.Yes)
+                {
+                    //CompressVoice(x);
+                }
             }
             
         }
+        
         private void InitializeVoiceRecorder()
         {
             _waveIn = new WaveInEvent();
             _waveIn.WaveFormat = new WaveFormat(44100, 1); // Sample rate and channels
         }
+  
+        
 
         private void share_btn_Click(object sender, EventArgs e)
         {
-            string uniqueFileName = $"Image_{DateTime.Now:yyyyMMddHHmmss}.jpeg";
-            pictureBox2.Image.Save(uniqueFileName, ImageFormat.Jpeg);
-            Console.WriteLine(uniqueFileName);
+            // string uniqueFileName = $"Image_{DateTime.Now:yyyyMMddHHmmss}.jpeg";
+            // pictureBox2.Image.Save(uniqueFileName, ImageFormat.Jpeg);
+            // Console.WriteLine(uniqueFileName);
+            Console.WriteLine(pepe);
             try
             {
-                UploadFilesToGoogleDrive(_drive, _folderId, uniqueFileName);
+                UploadFilesToGoogleDrive(_drive, _folderId, pepe);
                 Console.WriteLine(@"Upload successful.");
-                File.Delete(uniqueFileName);
-                Console.WriteLine($@"{uniqueFileName} deleted successfully.");
+                // File.Delete(uniqueFileName);
+                Console.WriteLine($@"{pepe} deleted successfully.");
             }
             catch (Exception ex)
             {
                 Console.WriteLine($@"An error occurred during upload: {ex.Message}");
                 try
                 {
-                    File.Delete(uniqueFileName);
-                    Console.WriteLine($@"{uniqueFileName} deleted after failed upload attempt.");
+                    // File.Delete(pepe);
+                    Console.WriteLine($@"{pepe} deleted after failed upload attempt.");
                 }
                 catch (IOException ioEx)
                 {
-                    Console.WriteLine($@"Failed to delete {uniqueFileName}: {ioEx.Message}");
+                    Console.WriteLine($@"Failed to delete {pepe}: {ioEx.Message}");
                 }
             }
 
@@ -1163,15 +1179,200 @@ namespace WindowsFormsApp1
         public Image ImageFromPictureBox => pictureBox1.Image;
         private void report_Click(object sender, EventArgs e)
         {
-            Form3 f3 = new Form3();
+            Form3 f3 = new Form3(this);
             f3.ShowDialog();
+            
         }
 
+        
         
         private void button4_Click(object sender, EventArgs e)//compress
         {
             
+                //CompressImage();
+                fileprep();
         }
+
+        private string CompressImage()
+        {
+
+            SaveFileDialog saveFileDialog = new SaveFileDialog();
+            saveFileDialog.Filter = @"JPEG Image (*.jpg;*.jpeg)|*.*";
+            saveFileDialog.Title = @"Save Image As...";
+            saveFileDialog.InitialDirectory =
+                Environment.CurrentDirectory; // Optional: Set initial directory to current directory
+
+            Image sourceImage;
+            int imageQuality;
+            string savePath;
+
+            if (saveFileDialog.ShowDialog() == DialogResult.OK)
+            {
+
+
+                // Assuming you have a PictureBox named pictureBox1 displaying the image to be compressed
+                sourceImage = pictureBox1.Image;
+
+                // You might want to ask the user for the desired image quality or set a default value
+                imageQuality = 80; // Example: 80% quality
+
+                // Construct the save path using the selected file name but keep the original extension
+                savePath = Path.Combine(Path.GetDirectoryName(saveFileDialog.FileName),
+                    Path.GetFileNameWithoutExtension(saveFileDialog.FileName)) + ".jpg";
+
+
+                try
+                {
+                    //Create an ImageCodecInfo-object for the codec information
+                    ImageCodecInfo jpegCodec = null;
+
+                    //Set quality factor for compression
+                    EncoderParameter imageQualitysParameter =
+                        new EncoderParameter(System.Drawing.Imaging.Encoder.Quality, imageQuality);
+
+                    //List all avaible codecs (system wide)
+                    ImageCodecInfo[] allCodecs = ImageCodecInfo.GetImageEncoders();
+
+                    EncoderParameters codecParameter = new EncoderParameters(1);
+                    codecParameter.Param[0] = imageQualitysParameter;
+
+                    //Find and choose JPEG codec
+                    for (int i = 0; i < allCodecs.Length; i++)
+                    {
+                        if (allCodecs[i].MimeType == "image/jpeg")
+                        {
+                            jpegCodec = allCodecs[i];
+                            break;
+                        }
+                    }
+
+                    //Save compressed image
+                    sourceImage.Save(savePath, jpegCodec, codecParameter);
+                    return savePath;
+                }
+                catch (Exception e)
+                {
+                    throw e;
+                }
+            }
+
+            return null;
+        }
+        
+        
+        public string PdfPath { get; set; }
+
+        private string pepe;
+        public void fileprep()
+        {
+            string folderName = DateTime.Now.ToString("yyyyMMddHHmmss");
+            string desktopPath = Environment.GetFolderPath(Environment.SpecialFolder.Desktop);
+        
+            string fullPath = Path.Combine(desktopPath, folderName);
+            if (!Directory.Exists(fullPath))
+            {
+                try
+                {
+                    Directory.CreateDirectory(fullPath);
+                    MessageBox.Show($"Directory '{fullPath}' created successfully.");
+                    
+                    if (pictureBox2.Image!= null)
+                    {
+                        // Construct the full path for the image in the new folder
+                        string imagePath = Path.Combine(fullPath, $"{folderName}.png");
+                        string wewe =CompressImage();
+                        // Save the image from PictureBox2 to the new folder
+                        pictureBox2.Image.Save(wewe, ImageFormat.Png); // Change ImageFormat.Png to your preferred format if necessary
+                        MessageBox.Show($"Image saved to {wewe}");
+                    }
+                    else
+                    {
+                        MessageBox.Show("No image found in PictureBox2.");
+                    }
+                    
+                    string audioFileName = Path.GetFileName(audiofilepath); // Extracts the file name from the path
+                    string copiedAudioFilePath = Path.Combine(fullPath, $"{folderName}_{audioFileName}"); // Append folder name to the audio file name
+        
+                    if (File.Exists(audiofilepath))
+                    {
+                        // Copy the original audio file to the new folder
+                        File.Copy(audiofilepath, copiedAudioFilePath, true); // Overwrite if the file already exists
+                        
+                        // Optionally, rename the copied audio file to include the current date and time
+                        string renamedAudioFilePath = Path.Combine(fullPath, $"{DateTime.Now:yyyyMMddHHmmss}.wav");
+                        File.Move(copiedAudioFilePath, renamedAudioFilePath);
+                        MessageBox.Show($"Audio file renamed to {renamedAudioFilePath}");
+                    }
+                    else
+                    {
+                        MessageBox.Show($"Original audio file not found: {audiofilepath}");
+                    }
+                    
+                    if (!string.IsNullOrEmpty(this.PdfPath))
+                    {
+                        string pdfFileName = Path.GetFileName(this.PdfPath); // Extracts the file name from the path
+                        string copiedPdfFilePath = Path.Combine(fullPath, $"{folderName}_{pdfFileName}"); // Append folder name to the PDF file name
+
+                        if (File.Exists(this.PdfPath))
+                        {
+                            // Copy the original PDF file to the new folder
+                            File.Copy(this.PdfPath, copiedPdfFilePath, true); // Overwrite if the file already exists
+            
+                            // Optionally, rename the copied PDF file to include the current date and time
+                            string renamedPdfFilePath = Path.Combine(fullPath, $"{DateTime.Now:yyyyMMddHHmmss}.{Path.GetExtension(pdfFileName)}");
+                            File.Move(copiedPdfFilePath, renamedPdfFilePath);
+                            MessageBox.Show($"PDF file renamed to {renamedPdfFilePath}");
+                        }
+                        else
+                        {
+                            MessageBox.Show($"Original PDF file not found: {this.PdfPath}");
+                        }
+                    }
+                    else
+                    {
+                        MessageBox.Show("PDF file path not set.");
+                    }
+                    
+                }
+                catch (IOException ioEx)
+                {
+                    MessageBox.Show($"IO Error: {ioEx.Message}");
+                }
+                catch (Exception ex)
+                {
+                    MessageBox.Show($"General Error: {ex.Message}");
+                }
+            }
+            else
+            {
+                MessageBox.Show($"Directory '{fullPath}' already exists.");
+            }
+
+            CompressToRAR(fullPath,folderName);
+        }
+
+        
+        
+
+
+        private const string WinRarPath = @"C:\Program Files\WinRAR\WinRAR.exe";
+        
+        private void CompressToRAR(string path,string folderName)
+        {
+            
+                    string inputFile = path;
+                    string outputRarFile = $@"C:\Users\DELL\Desktop\{folderName}.rar";
+                    pepe = outputRarFile;
+                    // Compress the file using WinRAR
+                    string arguments = $"a -ep \"{outputRarFile}\" \"{inputFile}\"";
+                    Process.Start(WinRarPath, arguments);
+        
+                    // Display a message or perform any other necessary actions
+                    MessageBox.Show("File compressed successfully!");
+                
+        }   
+        
+        
         
         private void UploadFilesToGoogleDrive(string drive, string folderId, string filesToUpload)
             {

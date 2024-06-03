@@ -1,21 +1,27 @@
 ﻿using System;
 using System.Diagnostics;
+using System.IO;
 using System.Windows.Forms;
-using Aspose.Pdf;
 using Aspose.Pdf.Text;
+using iTextSharp.text.pdf;
+
+using iTextSharp.text;
+
 
 namespace WindowsFormsApp1
 {
     public partial class Form3 : Form
     {
-        private string _doctorsName;
+        public string _doctorsName;
         private string _patientsName;
         private string _details;
         private string _date;
-
-        public Form3()
+        private Form1 form1;
+        
+        public Form3(Form1 form1Instance)
         {
             InitializeComponent();
+            this.form1 = form1Instance;
         }
 
 
@@ -61,9 +67,9 @@ namespace WindowsFormsApp1
             _date = DateTime.Now.ToString("yyyy/MM/dd"); 
 
             try{
-                Document pdfDocument = new Document();
+                Aspose.Pdf.Document pdfDocument = new Aspose.Pdf.Document();
 
-                Page pdfPage = pdfDocument.Pages.Add();
+                Aspose.Pdf.Page pdfPage = pdfDocument.Pages.Add();
 
                 TextFragment textFragmentDate = new TextFragment("Date: " + _date);
                 TextFragment textFragmentDoctorsName = new TextFragment("Doctor's Name: " + _doctorsName);
@@ -110,12 +116,63 @@ namespace WindowsFormsApp1
                 {
                     string filePath = saveFileDialog.FileName;
                     pdfDocument.Save(filePath);
+                    form1.PdfPath = filePath;
+                    DialogResult result = MessageBox.Show("Do you want to compress the saved pdf?", "Compress PDF",
+                        MessageBoxButtons.YesNo, MessageBoxIcon.Question);
+
+                    if (result == DialogResult.Yes)
+                    {
+                        CompressPdf(filePath, System.IO.Path.GetDirectoryName(filePath), System.IO.Path.GetFileNameWithoutExtension(filePath) + "_compressed.pdf");
+                    }
+                    
                     Process.Start(filePath);
                 }
             }catch (Exception ex) {
                 MessageBox.Show($@"An error occurred: {ex.Message}");
             }
         }
+        
+        private void CompressPdf(string inputFilePath, string outputDirectory, string outputFileName)
+        {
+            try
+            {
+                // Open the existing PDF document
+                PdfReader reader = new PdfReader(inputFilePath);
+                reader.RemoveUnusedObjects(); // Remove unused objects
+
+                // Create an output stream for the compressed PDF
+                using (FileStream outputStream = new FileStream(System.IO.Path.Combine(outputDirectory, outputFileName), FileMode.Create))
+                {
+                    // Create a new document and PdfSmartCopy instance
+                   Document document = new Document(reader.GetPageSizeWithRotation(1));
+                    PdfSmartCopy smartCopy = new PdfSmartCopy(document, outputStream);
+
+                    document.Open();
+
+                    // Copy each page from the original PDF to the new document
+                    for (int i = 1; i <= reader.NumberOfPages; i++)
+                    {
+                        PdfImportedPage page = smartCopy.GetImportedPage(reader, i);
+                        smartCopy.AddPage(page);
+                    }
+
+                    // Close the document and PdfSmartCopy
+                    document.Close();
+                }
+
+                reader.Close();
+
+                // Notify user that the compression was successful
+                MessageBox.Show("PDF compressed successfully!", "Success", MessageBoxButtons.OK, MessageBoxIcon.Information);
+            }
+            catch (Exception ex)
+            {
+                // Notify user if an error occurs
+                MessageBox.Show($"Error compressing PDF: {ex.Message}", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
+            }
+        }
+        
+        
     }
         
 }
